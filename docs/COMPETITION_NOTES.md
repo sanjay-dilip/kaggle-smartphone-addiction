@@ -35,7 +35,30 @@ academic_work_impact, addicted_label`
 
 `sample_submission.csv` columns: `id, addicted_label`.
 
-Missing values are present across multiple predictor columns in both
-`train.csv` and `test.csv`. This is noted only — no missingness analysis,
-imputation strategy, or statistics have been produced. That belongs to
-Build 1.
+Missing values are present across every predictor column in both
+`train.csv` and `test.csv` (4.2%-19.4% in train). Full missingness
+statistics, a missingness-vs-target analysis, and imputation
+recommendations were produced in Build 1 — see
+`notebooks/01_eda.ipynb` and `docs/BUILD_HISTORY.md`.
+
+## Target balance (Build 1)
+
+`addicted_label` is moderately imbalanced in train: 70.9% positive
+(490,474 rows), 29.1% negative (200,895 rows).
+
+## Data structure notes (Build 1)
+
+- `id` is a simple sequential integer, unique and contiguous within each
+  split (train 0-691368, test 691369-987670), with no detectable
+  relationship to the target or other features.
+- `daily_screen_time_hours` is never less than
+  `social_media_hours + gaming_hours + work_study_hours` in any of the
+  421,427 train rows where all four are present — consistent with, but not
+  proof of, a generator that composes daily screen time from named
+  components plus an additional non-negative term. See
+  `notebooks/01_eda.ipynb`, Section 11, for the full investigation.
+- No train/test distribution shift was detected on any predictor (KS tests
+  on numeric features, proportion comparisons on categoricals).
+- No exact or predictor-only duplicate rows were found within train or
+  within test; no leakage was found. See `notebooks/01_eda.ipynb`,
+  Sections 5 and 14.

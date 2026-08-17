@@ -14,9 +14,12 @@ ROC AUC.
 
 ## Current status
 
-**Build 0 - Competition Foundation.** Repository structure, configuration,
-dependencies, experiment tracking, and data smoke checks are in place. No
-EDA, feature engineering, modeling, or submissions have been done yet.
+**Build 1 - Data Audit and Synthetic-Data EDA complete.** Repository
+foundation (Build 0) and a full dataset audit (Build 1 — schema,
+missingness, duplicates, train/test shift, univariate target
+relationships, and a leakage assessment) are in place; see
+`notebooks/01_eda.ipynb`. No feature engineering, modeling, or submissions
+have been done yet.
 
 ## Planned build sequence
 
