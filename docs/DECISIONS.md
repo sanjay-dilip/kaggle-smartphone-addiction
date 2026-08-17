@@ -102,3 +102,51 @@ under a new `deliverables/` directory instead — traceable to an
 experiment, reproducible via a committed script. `submissions/` was
 subsequently deleted (empty except for its README) to avoid two
 directories serving the same purpose. See `deliverables/CONTENTS.md`.
+
+## XGBoost (E004) is the primary Build 4 control
+
+Build 3 benchmarked CatBoost (E002), LightGBM (E003), and XGBoost (E004)
+on the same raw feature set under the frozen `StratifiedKFold(n_splits=5,
+shuffle=True, random_state=42)` harness (`notebooks/03_model_benchmarks.ipynb`).
+All three beat E001 by a wide margin (deltas +0.049 to +0.052, roughly
+50x the combined fold-to-fold noise — not a marginal result). XGBoost had
+the best CV mean (0.96382) and becomes the primary control future feature
+engineering (Build 4+) is measured against.
+
+## CatBoost (E002) is the secondary Build 4 control; LightGBM (E003) is deprioritized
+
+Among the two benchmarks that clearly beat E001 besides the best model,
+CatBoost's out-of-fold predictions were the least correlated with
+XGBoost's (0.9879 vs LightGBM's 0.9901 — see
+`outputs/oof_prediction_correlation.csv`), making it the more useful
+secondary control for checking whether Build 4 feature-engineering gains
+generalize across model families, despite CatBoost's much longer training
+time (see below). LightGBM scored competitively (0.96106) and trained by
+far the fastest, but was dominated by XGBoost on CV and added less
+diversity than CatBoost — not selected as a control, but not rejected as
+a model family; it remains a fast option to revisit if training cost
+becomes a constraint later.
+
+## Native categorical/missing handling used for all three boosters, not one-hot encoding
+
+CatBoost, LightGBM, and XGBoost were all given the same raw feature
+treatment: numeric predictors with missing values preserved (native
+missing-value handling), categorical predictors filled with the same
+explicit "Missing" category used for E001 and cast to a pandas `category`
+dtype (native categorical splits). This was a deliberate choice to keep
+the three benchmarks comparable — using each library's "best" encoding
+independently would have mixed model-family effects with preprocessing
+effects, which Build 3 was designed to separate.
+
+## CatBoost's Build 3 benchmark did not fully converge within its training budget
+
+An initial timing check found CatBoost still improving at 2000 boosting
+iterations. For runtime practicality, all three boosters were capped at
+800 iterations / learning_rate=0.1 (shared budget). CatBoost hit that cap
+in every fold (`best_iteration=799` in all 5 folds) without early
+stopping ever triggering, while LightGBM converged well inside the budget
+(best iterations 190-634) and XGBoost mostly hit the cap too (best
+iterations 794-799). CatBoost's 0.96040 CV mean is therefore a
+resource-capped result, not its ceiling — this does not change its Build
+3 role (secondary control) but should be kept in mind if CatBoost's
+relative standing matters later.
