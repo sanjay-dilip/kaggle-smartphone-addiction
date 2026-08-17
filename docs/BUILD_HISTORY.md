@@ -102,7 +102,47 @@ with zero cell errors (verified by scanning all 36 code-cell outputs for
 
 ## Build 2 - Validation Harness and Logistic-Regression Baseline
 
-Not started.
+**Objective:** Implement a reusable, trustworthy CV harness and
+preprocessing pipeline per the frozen Build 1 decisions, and establish a
+real, cross-validated Logistic Regression baseline (E001).
+
+**Work completed:**
+
+- Added `src/validation.py` (`get_cv_splitter()`, wrapping
+  `StratifiedKFold(n_splits=5, shuffle=True, random_state=42)`) and
+  `src/preprocessing.py` (`build_preprocessor()`, a `ColumnTransformer`:
+  median imputation + `StandardScaler` for numeric predictors, explicit
+  "Missing" category + `OneHotEncoder` for categoricals; `id` excluded by
+  construction).
+- Added `NUMERIC_COLS` / `CATEGORICAL_COLS` / `ID_COLUMN` constants to
+  `src/config.py`.
+- Added `tests/test_preprocessing.py` (no missing values survive
+  transform, `id`/target never referenced, row count preserved) and
+  `tests/test_validation.py` (splitter settings match the frozen
+  decision, deterministic across runs, stratification holds).
+- Wrote `notebooks/02_baseline.ipynb`, which runs experiment **E001**
+  (Logistic Regression on the full imputed/encoded feature set) through
+  the harness above, fitting the preprocessor fresh inside each fold (no
+  cross-fold leakage), and records the result as a real row in
+  `experiments/experiments.csv` (idempotent — re-running the notebook does
+  not duplicate the row).
+
+**Major findings:**
+
+- E001 mean 5-fold ROC AUC: **0.9115** (std 0.0008) — a stable, credible
+  linear baseline, consistent with Build 1's finding of concentrated
+  signal in the screen-time feature family and no leakage/shift risk.
+
+**Decisions made:** see `docs/DECISIONS.md` (E001 adopted as the
+comparison target for later experiments).
+
+**Validation/checks:** notebook run top-to-bottom from a clean kernel via
+`jupyter nbconvert --to notebook --execute --inplace`, verified zero cell
+errors; re-run a second time to confirm the `experiments.csv` append is
+idempotent (still 1 data row after two runs); `pytest tests/ -v` run
+directly, 12/12 passing (6 Build 0 smoke tests + 6 new Build 2 tests).
+
+**Final status:** complete.
 
 ## Build 3 - Strong Model Benchmarks
 
