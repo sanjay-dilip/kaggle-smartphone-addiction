@@ -79,3 +79,15 @@ pipeline.
 missingness with no evidence it is random-within-category (Build 1,
 Section 4). Rather than impute a mode and hide that missingness,
 Build 2 preprocessing encodes missing as its own explicit category.
+
+## E001 Logistic Regression baseline is the comparison target for future experiments
+
+E001 (median imputation + StandardScaler for numeric, explicit Missing
+category + OneHotEncoder for categorical, `StratifiedKFold(n_splits=5,
+shuffle=True, random_state=42)`) scores a mean 5-fold ROC AUC of 0.9115
+(std 0.0008) — see `experiments/experiments.csv` and
+`notebooks/02_baseline.ipynb`. The low fold-to-fold variance is treated as
+confirmation that the Build 1 leakage/shift findings hold up under an
+actual model fit, not just descriptive statistics. Later experiments
+(E002-E005 and Build 3 strong models) are compared against this number
+using the same harness.
