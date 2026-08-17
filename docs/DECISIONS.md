@@ -101,4 +101,4 @@ submission. When a submission-ready CSV was first requested
 under a new `deliverables/` directory instead — traceable to an
 experiment, reproducible via a committed script. `submissions/` was
 subsequently deleted (empty except for its README) to avoid two
-directories serving the same purpose. See `deliverables/README.md`.
+directories serving the same purpose. See `deliverables/CONTENTS.md`.

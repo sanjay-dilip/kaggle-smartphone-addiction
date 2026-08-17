@@ -45,7 +45,7 @@ notebooks/      experimentation laboratory
 tests/          smoke checks and unit tests
 data/           competition CSVs (gitignored; see data/README.md)
 experiments/    experiment tracker (experiments.csv) and per-run artifacts
-deliverables/   submission-ready CSVs (see deliverables/README.md)
+deliverables/   submission-ready CSVs (see deliverables/CONTENTS.md)
 docs/           decision log, build history, competition notes
 outputs/        generated figures and artifacts
 ```
