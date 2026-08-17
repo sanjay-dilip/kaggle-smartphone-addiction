@@ -23,9 +23,9 @@ from xgboost import XGBClassifier
 
 from src.config import CATEGORICAL_COLS, RANDOM_SEED
 
-MAX_ITERATIONS: int = 2000
+MAX_ITERATIONS: int = 800
 EARLY_STOPPING_ROUNDS: int = 50
-LEARNING_RATE: float = 0.05
+LEARNING_RATE: float = 0.1
 
 
 def catboost_fold(
