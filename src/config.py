@@ -33,3 +33,4 @@ NUMERIC_COLS: list[str] = [
     "weekend_screen_time",
 ]
 CATEGORICAL_COLS: list[str] = ["gender", "stress_level", "academic_work_impact"]
+FEATURE_COLS: list[str] = NUMERIC_COLS + CATEGORICAL_COLS

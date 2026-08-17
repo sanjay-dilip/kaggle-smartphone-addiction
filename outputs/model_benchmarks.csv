@@ -1,0 +1,5 @@
+experiment_id,model,feature_set,cv_mean,cv_std,fold_min,fold_max,public_lb,training_notes
+E001,LogisticRegression,raw_predictors,0.91149,0.00081,,,0.91358,"reference, read from experiments.csv, not rerun"
+E002,CatBoostClassifier,raw_predictors,0.9603979278436313,0.0005118054228402928,0.9598202812027268,0.9613024840400195,,"2663s total, best_iterations=[799, 799, 799, 799, 799]"
+E003,LGBMClassifier,raw_predictors,0.9610649054378962,0.001125995779529636,0.9592694187978442,0.9623496469588919,,"142s total, best_iterations=[388, 190, 322, 439, 634]"
+E004,XGBClassifier,raw_predictors,0.9638247441843444,0.0005603704869632302,0.9630844909546624,0.9647376640078489,,"572s total, best_iterations=[799, 794, 799, 794, 794]"

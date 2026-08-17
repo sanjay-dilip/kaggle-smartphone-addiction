@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 from src.config import CATEGORICAL_COLS, ID_COLUMN, NUMERIC_COLS, TARGET_COLUMN
-from src.preprocessing import build_preprocessor
+from src.preprocessing import build_boosting_frame, build_preprocessor
 
 
 def _sample_frame(n_rows: int = 20) -> pd.DataFrame:
@@ -55,3 +55,34 @@ def test_preprocessor_output_row_count_matches_input() -> None:
     transformed = preprocessor.fit_transform(frame[NUMERIC_COLS + CATEGORICAL_COLS])
 
     assert transformed.shape[0] == 15
+
+
+def test_boosting_frame_preserves_numeric_missing_values() -> None:
+    """Numeric NaNs must survive untouched for native missing-value handling."""
+    frame = _sample_frame()
+
+    boosting_frame = build_boosting_frame(frame)
+
+    for col in NUMERIC_COLS:
+        assert boosting_frame[col].isna().sum() == frame[col].isna().sum()
+
+
+def test_boosting_frame_fills_categorical_missing_and_casts_to_category() -> None:
+    """Categorical NaNs must become an explicit 'Missing' category, not survive as NaN."""
+    frame = _sample_frame()
+
+    boosting_frame = build_boosting_frame(frame)
+
+    for col in CATEGORICAL_COLS:
+        assert boosting_frame[col].isna().sum() == 0
+        assert str(boosting_frame[col].dtype) == "category"
+        assert "Missing" in boosting_frame[col].cat.categories
+
+
+def test_boosting_frame_excludes_id_and_target_columns() -> None:
+    """The boosting frame must only contain NUMERIC_COLS + CATEGORICAL_COLS."""
+    frame = _sample_frame()
+
+    boosting_frame = build_boosting_frame(frame)
+
+    assert list(boosting_frame.columns) == NUMERIC_COLS + CATEGORICAL_COLS

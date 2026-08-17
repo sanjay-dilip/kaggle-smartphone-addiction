@@ -14,14 +14,19 @@ ROC AUC.
 
 ## Current status
 
-**Build 2 - Validation Harness and Logistic Regression Baseline
-complete.** Repository foundation (Build 0), a full dataset audit (Build
-1 — see `notebooks/01_eda.ipynb`), and a validated Logistic Regression
-baseline (Build 2 — see `notebooks/02_baseline.ipynb`) are in place. E001
-(Logistic Regression, raw/imputed features) scores a mean 5-fold ROC AUC
-of 0.9115 (std 0.0008) and a public leaderboard score of 0.91358; see
-`experiments/experiments.csv`. No feature engineering, strong-model
-benchmarking, or hyperparameter tuning have been done yet.
+**Build 3 - Strong Model Benchmarks complete.** Repository foundation
+(Build 0), a full dataset audit (Build 1 — see `notebooks/01_eda.ipynb`),
+a validated Logistic Regression baseline (Build 2 — see
+`notebooks/02_baseline.ipynb`), and gradient-boosting benchmarks (Build 3
+— see `notebooks/03_model_benchmarks.ipynb`) are in place. E001
+(Logistic Regression) scores a mean 5-fold ROC AUC of 0.9115 (public LB
+0.91358); CatBoost, LightGBM, and XGBoost were benchmarked on the same
+raw feature set, all beating E001 by a wide margin — XGBoost (E004) is
+the strongest so far at CV mean 0.9638 and is the primary control for
+upcoming feature-engineering work. Full comparison in
+`experiments/experiments.csv` and `outputs/model_benchmarks.csv`. No
+feature engineering, hyperparameter tuning, or ensembling have been done
+yet.
 
 ## Planned build sequence
 

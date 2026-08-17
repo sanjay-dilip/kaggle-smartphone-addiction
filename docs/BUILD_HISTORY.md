@@ -151,7 +151,94 @@ directly, 12/12 passing (6 Build 0 smoke tests + 6 new Build 2 tests).
 
 ## Build 3 - Strong Model Benchmarks
 
-Not started.
+**Objective:** Answer one question cleanly — which strong gradient-
+boosting model family (CatBoost, LightGBM, XGBoost) performs best on the
+current raw feature set, under the frozen Build 2 validation framework —
+and select the primary/secondary controls for Build 4 feature
+engineering. No feature engineering, hyperparameter search, ensembling,
+or final submission strategy in this build.
+
+**Work completed:**
+
+- Added `src/benchmarking.py` (`run_cv_benchmark`, `CVBenchmarkResult`):
+  extends the frozen `StratifiedKFold` harness with OOF prediction
+  storage and cross-fold test-prediction averaging, while keeping model
+  construction/fitting fully model-specific.
+- Added `src/boosting_models.py`: CatBoost/LightGBM/XGBoost fold
+  callbacks sharing one training budget (`iterations=800`,
+  `learning_rate=0.1`, `early_stopping_rounds=50`) and native
+  categorical/missing-value handling.
+- Added `build_boosting_frame()` to `src/preprocessing.py`: numeric NaNs
+  preserved (native handling), categorical NaNs filled to "Missing" and
+  cast to `category` dtype (native handling) — the same treatment for
+  all three boosters.
+- Added `src/submission_validation.py` (`validate_submission`) and
+  refactored `generate_submission.py` to use it (behavior-preserving;
+  E001's result is unchanged).
+- Added `catboost`, `lightgbm`, `xgboost` to `requirements.txt`. No GPU
+  available in this environment (verified: no `nvidia-smi`) — CPU only.
+- Wrote `notebooks/03_model_benchmarks.ipynb`, which ran E002 (CatBoost),
+  E003 (LightGBM), E004 (XGBoost) through the shared harness, built a
+  durable comparison artifact (`outputs/model_benchmarks.csv`), computed
+  OOF prediction correlations (`outputs/oof_prediction_correlation.csv`),
+  and generated + validated submission files for the two benchmarks a
+  programmatic diversity rule selected.
+- Added `tests/test_benchmarking.py`, `tests/test_boosting_models.py`,
+  `tests/test_submission_validation.py`, and 3 new tests in
+  `tests/test_preprocessing.py` for `build_boosting_frame`.
+
+**Major findings:**
+
+| Experiment | Model | CV mean | CV std | Delta vs E001 | Elapsed |
+|---|---|---|---|---|---|
+| E001 | LogisticRegression | 0.91149 | 0.00081 | — | 25s |
+| E002 | CatBoostClassifier | 0.96040 | 0.00051 | +0.04891 | 2663s (~44 min) |
+| E003 | LGBMClassifier | 0.96106 | 0.00113 | +0.04957 | 142s (~2.4 min) |
+| E004 | XGBClassifier | 0.96382 | 0.00056 | +0.05233 | 572s (~9.5 min) |
+
+- All three boosters beat E001 by a wide margin — the smallest delta
+  (E002, +0.04891) is roughly 50x the combined fold-to-fold noise of the
+  two models being compared. This is not a marginal result.
+- XGBoost (E004) had the best CV mean and becomes the primary Build 4
+  control.
+- CatBoost's fold results (`best_iteration=799` in every fold) show it
+  never triggered early stopping within the shared 800-iteration budget —
+  a runtime-practicality cap (an earlier 2000-iteration timing check
+  found it still improving), not evidence of CatBoost's true ceiling.
+  XGBoost mostly hit the same cap (best iterations 794-799). LightGBM
+  converged well inside the budget (best iterations 190-634) and trained
+  ~19x faster than XGBoost and ~19x faster than CatBoost.
+- CatBoost had the lowest fold-to-fold variance (std 0.00051); LightGBM
+  had the highest (std 0.00113), consistent with its best_iteration
+  varying more across folds (spread 444 vs XGBoost's 5 and CatBoost's 0).
+- OOF prediction correlations between the three boosters are all high
+  (0.988-0.992), as expected given they are fit to the same strong signal
+  Build 1 identified — CatBoost is the least correlated with XGBoost
+  (0.9879), making it the more useful secondary control despite its
+  longer training time.
+- E002 and E004 were selected for submission by a programmatic rule (best
+  CV mean, plus the most-diverse model among those that clearly beat
+  E001 by 3x E001's fold std); `deliverables/E002_submission.csv` and
+  `deliverables/E004_submission.csv` were generated (fold-averaged test
+  probabilities, no retraining on full data) and validated against
+  `data/sample_submission.csv`. E003 was not submitted.
+
+**Decisions made:** see `docs/DECISIONS.md` — XGBoost (E004) as primary
+Build 4 control, CatBoost (E002) as secondary control, LightGBM (E003)
+deprioritized as a control (not rejected as a model family), native
+categorical/missing handling used for all three boosters, and CatBoost's
+benchmark noted as resource-capped rather than converged.
+
+**Validation/checks:** notebook run top-to-bottom from a clean kernel via
+`jupyter nbconvert --to notebook --execute --inplace` (total runtime
+~55 min), verified zero cell errors across all 14 code cells; both
+generated submission files independently re-validated (schema, id order,
+range) outside the notebook; `pytest tests/ -v` run directly, 35/35
+passing (13 prior + 22 new Build 3 tests, including 6 boosting-model
+fold-callback tests parametrized across all three libraries).
+
+**Final status:** complete. Public LB scores for E002/E004 pending user
+submission — to be recorded against their experiment rows once known.
 
 ## Build 4 - Hypothesis-Driven Feature Engineering
 

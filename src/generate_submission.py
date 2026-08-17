@@ -11,10 +11,9 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 
 from src.config import (
-    CATEGORICAL_COLS,
     DELIVERABLES_DIR,
+    FEATURE_COLS,
     ID_COLUMN,
-    NUMERIC_COLS,
     RANDOM_SEED,
     SAMPLE_SUBMISSION_PATH,
     TARGET_COLUMN,
@@ -22,8 +21,7 @@ from src.config import (
     TRAIN_PATH,
 )
 from src.preprocessing import build_preprocessor
-
-FEATURE_COLS: list[str] = NUMERIC_COLS + CATEGORICAL_COLS
+from src.submission_validation import validate_submission
 
 
 def build_e001_pipeline() -> Pipeline:
@@ -58,9 +56,7 @@ def generate_e001_submission() -> pd.DataFrame:
         }
     )
 
-    assert list(submission.columns) == list(sample_submission.columns)
-    assert len(submission) == len(sample_submission)
-    assert (submission[ID_COLUMN].values == sample_submission[ID_COLUMN].values).all()
+    validate_submission(submission, sample_submission)
 
     return submission
 

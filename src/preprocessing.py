@@ -6,6 +6,7 @@ category for categoricals (not mode imputation), one-hot encoding, and
 `id` excluded from the feature matrix.
 """
 
+import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
@@ -42,3 +43,20 @@ def build_preprocessor() -> ColumnTransformer:
             ("categorical", categorical_pipeline, CATEGORICAL_COLS),
         ]
     )
+
+
+def build_boosting_frame(df: pd.DataFrame) -> pd.DataFrame:
+    """Builds the shared raw feature frame for gradient-boosting benchmarks.
+
+    Numeric predictors are left untouched, including missing values —
+    CatBoost, LightGBM, and XGBoost all handle missing numeric values
+    natively, so imputation would remove information these models can use
+    directly. Categorical predictors get the same explicit "Missing"
+    category used for E001 (docs/DECISIONS.md), then a pandas `category`
+    dtype so LightGBM and XGBoost can use native categorical splits;
+    CatBoost's `cat_features` accepts this dtype directly as well.
+    """
+    frame = df[NUMERIC_COLS + CATEGORICAL_COLS].copy()
+    for col in CATEGORICAL_COLS:
+        frame[col] = frame[col].fillna("Missing").astype("category")
+    return frame
