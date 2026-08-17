@@ -1,14 +1,7 @@
 # Deliverables
 
 Submission-ready CSVs generated from validated experiments, for direct
-handoff (e.g. manual Kaggle upload) rather than repository-internal
-experiment tracking.
-
-This is distinct from `submissions/`, which documents the general
-submission-tracking convention tied to `experiments/experiments.csv`. Files
-in this directory are produced the same way — traceable to an experiment
-row — but are kept separately because they were requested as standalone
-deliverables rather than part of the iterative submission history.
+handoff (e.g. manual Kaggle upload).
 
 ## Convention
 

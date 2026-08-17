@@ -92,12 +92,13 @@ actual model fit, not just descriptive statistics. Later experiments
 (E002-E005 and Build 3 strong models) are compared against this number
 using the same harness.
 
-## `deliverables/` holds standalone submission-ready files, separate from `submissions/`
+## `deliverables/` holds submission-ready files
 
-`submissions/` already documents the general Kaggle submission-tracking
-convention tied to `experiments/experiments.csv`. When a submission-ready
-CSV is explicitly requested as a standalone handoff artifact (as with
-`E001_submission.csv`) rather than as part of the iterative submission
-workflow, it is generated the same way (traceable to an experiment,
-reproducible via a committed script) but saved under `deliverables/`
-instead. See `deliverables/README.md`.
+Build 0 originally created a `submissions/` directory for Kaggle
+submission tracking, but it was never populated with an actual
+submission. When a submission-ready CSV was first requested
+(`E001_submission.csv`), it was generated as a standalone handoff artifact
+under a new `deliverables/` directory instead — traceable to an
+experiment, reproducible via a committed script. `submissions/` was
+subsequently deleted (empty except for its README) to avoid two
+directories serving the same purpose. See `deliverables/README.md`.

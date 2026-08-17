@@ -45,7 +45,7 @@ notebooks/      experimentation laboratory
 tests/          smoke checks and unit tests
 data/           competition CSVs (gitignored; see data/README.md)
 experiments/    experiment tracker (experiments.csv) and per-run artifacts
-submissions/    Kaggle submission files (see submissions/README.md)
+deliverables/   submission-ready CSVs (see deliverables/README.md)
 docs/           decision log, build history, competition notes
 outputs/        generated figures and artifacts
 ```
