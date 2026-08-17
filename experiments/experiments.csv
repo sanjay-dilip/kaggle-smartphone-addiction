@@ -1,0 +1,1 @@
+experiment_id,date,model,feature_set,hypothesis,preprocessing,cv_method,seed,parameters,fold_1_auc,fold_2_auc,fold_3_auc,fold_4_auc,fold_5_auc,cv_mean,cv_std,public_lb,submission_file,conclusion,next_action
