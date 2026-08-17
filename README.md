@@ -19,9 +19,9 @@ complete.** Repository foundation (Build 0), a full dataset audit (Build
 1 — see `notebooks/01_eda.ipynb`), and a validated Logistic Regression
 baseline (Build 2 — see `notebooks/02_baseline.ipynb`) are in place. E001
 (Logistic Regression, raw/imputed features) scores a mean 5-fold ROC AUC
-of 0.9115 (std 0.0008); see `experiments/experiments.csv`. No feature
-engineering, strong-model benchmarking, hyperparameter tuning, or Kaggle
-submissions have been done yet.
+of 0.9115 (std 0.0008) and a public leaderboard score of 0.91358; see
+`experiments/experiments.csv`. No feature engineering, strong-model
+benchmarking, or hyperparameter tuning have been done yet.
 
 ## Planned build sequence
 

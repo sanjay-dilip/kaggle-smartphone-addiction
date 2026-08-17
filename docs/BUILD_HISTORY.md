@@ -132,6 +132,11 @@ real, cross-validated Logistic Regression baseline (E001).
 - E001 mean 5-fold ROC AUC: **0.9115** (std 0.0008) — a stable, credible
   linear baseline, consistent with Build 1's finding of concentrated
   signal in the screen-time feature family and no leakage/shift risk.
+- E001 public leaderboard score: **0.91358** (submitted
+  `deliverables/E001_submission.csv`) — 0.0021 above the CV mean, well
+  within the fold-to-fold std of 0.0008-scale noise expected from Build
+  1's finding of no meaningful train/test shift. No CV/LB divergence to
+  investigate at this stage.
 
 **Decisions made:** see `docs/DECISIONS.md` (E001 adopted as the
 comparison target for later experiments).
