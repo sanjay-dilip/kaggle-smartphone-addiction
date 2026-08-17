@@ -41,7 +41,64 @@ output at build completion).
 
 ## Build 1 - Data Audit and Synthetic-Data EDA
 
-Not started.
+**Objective:** Understand the training and test data deeply enough that
+Build 2 can start with a trustworthy validation strategy and a justified
+baseline. Data audit only — no models trained, no CV ROC AUC computed, no
+submissions generated.
+
+**Work completed:**
+
+- Wrote `notebooks/01_eda.ipynb`, a 16-section audit covering: schema,
+  target balance, missingness (train/test and vs. target), exact and
+  predictor-only duplicates, train/test predictor overlap, numeric and
+  categorical feature audits, univariate target relationships, train/test
+  distribution shift (KS tests), pairwise correlations, a targeted
+  screen-time component investigation, other deterministic-relationship
+  checks, an `id` structure audit, and an explicit leakage assessment.
+- Saved supporting audit tables to `outputs/` (`schema_summary.csv`,
+  `missingness_summary.csv`, `missingness_vs_target.csv`,
+  `numeric_summary_train.csv`, `numeric_summary_test.csv`,
+  `train_test_ks.csv`, `categorical_target_rates.csv`,
+  `univariate_target_numeric.csv`, `correlation_matrix.csv`) and five
+  figures to `outputs/figures/`.
+- Added `scipy` and `matplotlib` to `requirements.txt` (deferred from
+  Build 0).
+
+**Major findings:**
+
+- Target is moderately imbalanced: 70.9% positive / 29.1% negative.
+- Every predictor has missingness (4.2%-19.4% in train); train/test
+  missingness gaps are small (largest 3.4 points, `social_media_hours`).
+- Missingness is not meaningfully related to the target, per-column or via
+  total missing count.
+- No predictor-vector duplicates within train or within test; only 2
+  negligible train/test predictor-vector overlaps, both explained by
+  near-total-missingness rows, not genuine duplication.
+- No meaningful train/test distribution shift on any numeric feature (KS
+  tests all non-significant) or categorical feature.
+- `daily_screen_time_hours`, `weekend_screen_time`, and
+  `social_media_hours` carry by far the strongest univariate target
+  association; `age`, `notifications_per_day`, and the categoricals carry
+  very little.
+- `daily_screen_time_hours >= social_media_hours + gaming_hours +
+  work_study_hours` holds in 100% of the 421k fully-observed rows, with a
+  right-skewed non-negative residual that correlates with the target — a
+  candidate engineered-feature hypothesis, not yet implemented.
+- `id` is sequential and contiguous with no drift or target relationship.
+- No leakage found.
+
+**Decisions made:** see `docs/DECISIONS.md` (`id` excluded from features;
+`StratifiedKFold` retained as the starting validation scheme; missingness
+not treated as informative by default; categorical missing values get an
+explicit "Missing" category).
+
+**Validation performed:** notebook restarted and run top-to-bottom from a
+clean kernel via `jupyter nbconvert --to notebook --execute --inplace`
+with zero cell errors (verified by scanning all 36 code-cell outputs for
+`output_type == "error"`); existing `pytest tests/ -v` suite re-run,
+6/6 passing.
+
+**Final status:** complete.
 
 ## Build 2 - Validation Harness and Logistic-Regression Baseline
 

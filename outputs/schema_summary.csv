@@ -1,0 +1,15 @@
+column,dtype,train_non_null,test_non_null,train_nunique,test_nunique,train_min,train_max,test_min,test_max
+id,int64,691369,296302.0,691369,296302.0,0.0,691368.0,691369.0,987670.0
+age,float64,662440,279164.0,18,18.0,18.0,35.0,18.0,35.0
+daily_screen_time_hours,float64,595515,263514.0,1389,1349.0,0.5,15.0,0.5,15.0
+social_media_hours,float64,557374,248905.0,721,703.0,0.0,8.0,0.0,7.85
+gaming_hours,float64,564548,236882.0,401,401.0,0.0,4.0,0.0,4.0
+work_study_hours,float64,639851,268525.0,600,601.0,0.0,6.0,0.0,6.0
+sleep_hours,float64,646889,273847.0,451,451.0,4.5,9.0,4.5,9.0
+notifications_per_day,float64,623785,262081.0,231,231.0,20.0,250.0,20.0,250.0
+app_opens_per_day,float64,610659,270597.0,166,166.0,15.0,180.0,15.0,180.0
+weekend_screen_time,float64,579306,245605.0,1437,1404.0,0.51,17.56,0.51,17.56
+gender,str,662335,282090.0,3,3.0,,,,
+stress_level,str,636221,276676.0,3,3.0,,,,
+academic_work_impact,str,647145,270581.0,2,2.0,,,,
+addicted_label,int64,691369,,2,,0.0,1.0,,

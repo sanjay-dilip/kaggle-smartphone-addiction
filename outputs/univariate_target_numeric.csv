@@ -1,0 +1,10 @@
+column,mean_target0,mean_target1,diff,standardized_diff
+daily_screen_time_hours,5.043,8.707,3.664,1.3462
+weekend_screen_time,6.849,10.559,3.71,1.299
+social_media_hours,1.376,2.919,1.543,1.1726
+work_study_hours,1.873,2.57,0.697,0.5537
+gaming_hours,1.16,1.582,0.422,0.452
+app_opens_per_day,97.871,104.593,6.721,0.1398
+sleep_hours,6.722,6.838,0.116,0.0937
+notifications_per_day,147.088,145.406,-1.682,-0.0255
+age,26.583,26.629,0.046,0.0089

@@ -42,3 +42,40 @@ Public leaderboard scores are computed on a subset of the test set and are
 noisier and more overfittable than a well-constructed local CV. When the two
 disagree, the CV methodology is scrutinized before trusting the leaderboard
 number, not the other way around.
+
+## `id` is excluded from the feature set
+
+Build 1 audited `id` for ordering, batching, generator drift, and a target
+relationship (`notebooks/01_eda.ipynb`, Section 13). It is a sequential,
+contiguous integer with no detectable structure: target rate is flat
+(70.6%-71.3%) across 20 id bins, and feature means/missingness rates show
+no drift across 10 id bins. It carries no signal and is dropped from the
+feature matrix starting Build 2.
+
+## Plain `StratifiedKFold` is the starting validation scheme
+
+Build 1 checked for the two main reasons to deviate from plain random CV:
+duplicate/group leakage and train/test distribution shift. Neither was
+found (`notebooks/01_eda.ipynb`, Sections 5 and 9) — no predictor-vector
+duplicates within train or test, and no numeric feature showed a
+significant KS-test difference between train and test. Build 2 starts with
+`StratifiedKFold(n_splits=5, shuffle=True, random_state=42)` rather than a
+grouped or shift-aware scheme, revisited only if CV/leaderboard scores
+diverge later.
+
+## Missing values are not treated as informative by default
+
+Build 1 tested both per-column missingness and total-missing-count against
+the target (`notebooks/01_eda.ipynb`, Section 4.2). The largest per-column
+effect was 0.42 percentage points (`sleep_hours`, p ≈ 0.06); target rate by
+`row_missing_count` was flat across the bulk of the distribution. Missing
+indicators are not assumed to help and are deferred to a low-priority Build
+2 experiment (E002) rather than built into the default preprocessing
+pipeline.
+
+## Categorical missing values get an explicit "Missing" category, not imputation
+
+`gender`, `stress_level`, and `academic_work_impact` each have 4-8%
+missingness with no evidence it is random-within-category (Build 1,
+Section 4). Rather than impute a mode and hide that missingness,
+Build 2 preprocessing encodes missing as its own explicit category.
