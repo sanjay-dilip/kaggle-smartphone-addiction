@@ -1,0 +1,28 @@
+# Environments
+.env
+.env.*
+.venv/
+venv/
+env/
+phone-addiction/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Kaggle competition data (raw files only; keep documentation)
+data/*.csv
+data/*.csv.zip
+data/*.zip
+
+# Local resumability doc (not portfolio-facing, kept out of version control)
+CONTEXT.md
