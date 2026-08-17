@@ -91,3 +91,13 @@ confirmation that the Build 1 leakage/shift findings hold up under an
 actual model fit, not just descriptive statistics. Later experiments
 (E002-E005 and Build 3 strong models) are compared against this number
 using the same harness.
+
+## `deliverables/` holds standalone submission-ready files, separate from `submissions/`
+
+`submissions/` already documents the general Kaggle submission-tracking
+convention tied to `experiments/experiments.csv`. When a submission-ready
+CSV is explicitly requested as a standalone handoff artifact (as with
+`E001_submission.csv`) rather than as part of the iterative submission
+workflow, it is generated the same way (traceable to an experiment,
+reproducible via a committed script) but saved under `deliverables/`
+instead. See `deliverables/README.md`.
