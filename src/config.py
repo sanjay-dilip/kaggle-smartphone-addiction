@@ -10,6 +10,7 @@ PROJECT_ROOT: Path = Path(__file__).resolve().parent.parent
 DATA_DIR: Path = PROJECT_ROOT / "data"
 EXPERIMENTS_DIR: Path = PROJECT_ROOT / "experiments"
 SUBMISSIONS_DIR: Path = PROJECT_ROOT / "submissions"
+DELIVERABLES_DIR: Path = PROJECT_ROOT / "deliverables"
 OUTPUTS_DIR: Path = PROJECT_ROOT / "outputs"
 FIGURES_DIR: Path = OUTPUTS_DIR / "figures"
 
