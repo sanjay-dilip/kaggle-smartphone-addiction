@@ -1,0 +1,9 @@
+column,category,target_rate,count
+gender,Female,0.7038,221595
+gender,Male,0.7232,223662
+gender,Other,0.701,217078
+stress_level,High,0.7114,220873
+stress_level,Low,0.7112,207783
+stress_level,Medium,0.7057,207565
+academic_work_impact,No,0.711,316579
+academic_work_impact,Yes,0.7079,330566

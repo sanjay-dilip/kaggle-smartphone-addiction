@@ -1,0 +1,13 @@
+column,train_missing,train_missing_pct,test_missing,test_missing_pct,diff_pp
+social_media_hours,133995,19.381,47397,15.996,3.385
+app_opens_per_day,80710,11.674,25705,8.675,2.999
+daily_screen_time_hours,95854,13.864,32788,11.066,2.799
+academic_work_impact,44224,6.397,25721,8.681,-2.284
+work_study_hours,51518,7.452,27777,9.375,-1.923
+notifications_per_day,67584,9.775,34221,11.549,-1.774
+gaming_hours,126821,18.343,59420,20.054,-1.71
+age,28929,4.184,17138,5.784,-1.6
+stress_level,55148,7.977,19626,6.624,1.353
+sleep_hours,44480,6.434,22455,7.578,-1.145
+weekend_screen_time,112063,16.209,50697,17.11,-0.901
+gender,29034,4.199,14212,4.796,-0.597
