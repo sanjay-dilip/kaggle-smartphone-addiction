@@ -189,12 +189,12 @@ or final submission strategy in this build.
 
 **Major findings:**
 
-| Experiment | Model | CV mean | CV std | Delta vs E001 | Elapsed |
-|---|---|---|---|---|---|
-| E001 | LogisticRegression | 0.91149 | 0.00081 | — | 25s |
-| E002 | CatBoostClassifier | 0.96040 | 0.00051 | +0.04891 | 2663s (~44 min) |
-| E003 | LGBMClassifier | 0.96106 | 0.00113 | +0.04957 | 142s (~2.4 min) |
-| E004 | XGBClassifier | 0.96382 | 0.00056 | +0.05233 | 572s (~9.5 min) |
+| Experiment | Model | CV mean | CV std | Delta vs E001 | Public LB | Elapsed |
+|---|---|---|---|---|---|---|
+| E001 | LogisticRegression | 0.91149 | 0.00081 | — | 0.91358 | 25s |
+| E002 | CatBoostClassifier | 0.96040 | 0.00051 | +0.04891 | 0.96151 | 2663s (~44 min) |
+| E003 | LGBMClassifier | 0.96106 | 0.00113 | +0.04957 | not submitted | 142s (~2.4 min) |
+| E004 | XGBClassifier | 0.96382 | 0.00056 | +0.05233 | 0.96539 | 572s (~9.5 min) |
 
 - All three boosters beat E001 by a wide margin — the smallest delta
   (E002, +0.04891) is roughly 50x the combined fold-to-fold noise of the
@@ -222,6 +222,13 @@ or final submission strategy in this build.
   `deliverables/E004_submission.csv` were generated (fold-averaged test
   probabilities, no retraining on full data) and validated against
   `data/sample_submission.csv`. E003 was not submitted.
+- Public LB scores (submitted after this build's PR merged): E002 0.96151
+  (+0.00111 vs its CV mean), E004 0.96539 (+0.00157 vs its CV mean). Both
+  boosters landed slightly above their CV mean, in the same direction and
+  similar small magnitude as E001's CV/LB gap (+0.0021) — consistent with
+  Build 1's finding of no meaningful train/test shift, no CV/LB divergence
+  to investigate. E004 remains the best public LB score, consistent with
+  its status as the best CV score.
 
 **Decisions made:** see `docs/DECISIONS.md` — XGBoost (E004) as primary
 Build 4 control, CatBoost (E002) as secondary control, LightGBM (E003)
@@ -237,8 +244,8 @@ range) outside the notebook; `pytest tests/ -v` run directly, 35/35
 passing (13 prior + 22 new Build 3 tests, including 6 boosting-model
 fold-callback tests parametrized across all three libraries).
 
-**Final status:** complete. Public LB scores for E002/E004 pending user
-submission — to be recorded against their experiment rows once known.
+**Final status:** complete. Public LB scores for E002/E004 recorded above
+and in `experiments/experiments.csv`.
 
 ## Build 4 - Hypothesis-Driven Feature Engineering
 
