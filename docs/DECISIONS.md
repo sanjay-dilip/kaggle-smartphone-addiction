@@ -150,3 +150,40 @@ iterations 794-799). CatBoost's 0.96040 CV mean is therefore a
 resource-capped result, not its ceiling — this does not change its Build
 3 role (secondary control) but should be kept in mind if CatBoost's
 relative standing matters later.
+
+## `screen_residual` accepted into the Build 4+ feature set; `component_sum` and the `app_opens_per_day` missingness flag rejected
+
+Build 1 (`notebooks/01_eda.ipynb`, Section 12) found `daily_screen_time_hours
+>= social_media_hours + gaming_hours + work_study_hours` holds in 100% of
+fully-observed rows, with a right-skewed residual correlated with the
+target. Build 4 (`notebooks/04_feature_engineering.ipynb`) tested this as
+two candidate features against the frozen XGBoost (E004) and CatBoost
+(E002) controls:
+
+- `screen_residual` (`daily_screen_time_hours` minus the three components,
+  via `add_screen_residual`): **accepted**. E006 (XGBoost) scored CV mean
+  0.96445 (std 0.00056), +0.00062 vs E004, 5/5 folds improved, tight range
+  [+0.00050, +0.00072]. E008 (CatBoost transfer test) scored CV mean
+  0.96104 (std 0.00055), +0.00064 vs E002, 5/5 folds improved — a near-
+  identical delta on a second model family, strong evidence the feature
+  carries model-independent signal rather than an XGBoost-specific
+  artifact. This is the largest and most consistent gain of any Build 4
+  candidate and becomes part of the default feature set going forward.
+- `component_sum` (`social_media_hours + gaming_hours + work_study_hours`,
+  via `add_component_sum`): **rejected as redundant**, not as individually
+  useless. E005 (XGBoost, isolated) scored CV mean 0.96408, +0.00026 vs
+  E004, 5/5 folds improved — a real but smaller gain than
+  `screen_residual`. E007 (XGBoost, both features combined) scored CV mean
+  0.96443, statistically indistinguishable from E006 (`screen_residual`
+  alone, 0.96445) — combining the two features provided no gain over
+  `screen_residual` by itself. `component_sum` is dropped from the default
+  feature set; `screen_residual` alone captures the relationship.
+- `app_opens_per_day_is_missing` (via `add_missing_flag`): **rejected as
+  noise**. E009 (XGBoost) scored CV mean 0.96384, +0.00002 vs E004, only
+  3/5 folds improved (mixed sign) — within fold-to-fold noise, consistent
+  with Build 1's finding (`docs/DECISIONS.md`, "Missing values are not
+  treated as informative by default") that missingness carries little
+  target signal in this dataset.
+
+Evidence trace: `experiments/experiments.csv` (E005-E009 rows) and
+`outputs/feature_experiments.csv`.
