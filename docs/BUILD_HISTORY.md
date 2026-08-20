@@ -299,6 +299,12 @@ adversarial validation, or generator-exploitation tricks in this build.
 - Real notebook-execution results matched the session's pre-commit
   scratch validation numbers to 5 decimal places across all five
   experiments — no divergence to investigate.
+- E006 public leaderboard score: **0.96608** (submitted
+  `deliverables/E006_xgb_screen_residual_submission.csv`) — 0.00163 above
+  the CV mean, same direction and similar small magnitude as Build 3's
+  E002 (+0.00111) and E004 (+0.00157) CV/LB gaps. No CV/LB divergence to
+  investigate. E006 is the best public LB score recorded across all
+  builds, surpassing E004's 0.96539.
 
 **Decisions made:** see `docs/DECISIONS.md` — `screen_residual` accepted
 into the default Build 4+ feature set; `component_sum` rejected as
@@ -313,9 +319,8 @@ generated and validated in-notebook (296,302 rows, schema matches
 `data/sample_submission.csv`); `pytest tests/ -v` run directly, 48/48
 passing (35 prior + 13 new Build 4 tests).
 
-**Final status:** complete. Public LB score for E006 pending manual
-Kaggle upload — to be recorded in `experiments/experiments.csv` and here
-once provided.
+**Final status:** complete. Public LB score for E006 recorded above and
+in `experiments/experiments.csv`.
 
 ## Build 5 - Synthetic-Generator Investigation
 
