@@ -1,0 +1,8 @@
+experiment_id,model,feature_set,cv_mean,cv_std,delta_vs_control,folds_improved,public_lb,decision
+E004,XGBClassifier,raw,0.96382,0.00056,0.0,,0.96539,control
+E005,XGBClassifier,raw + component_sum,0.9640842121505369,0.0005605691093095611,0.00026,5.0,,"rejected (redundant with screen_residual, see E007)"
+E006,XGBClassifier,raw + screen_residual,0.9644468352303257,0.0005592337100751814,0.00062,5.0,,accepted — new best validated XGBoost model
+E007,XGBClassifier,raw + component_sum + screen_residual,0.9644344907378309,0.0005489134027254421,0.00061,5.0,,rejected (no gain over screen_residual alone)
+E002,CatBoostClassifier,raw,0.9604,0.00051,0.0,,0.96151,control
+E008,CatBoostClassifier,raw + screen_residual,0.9610383982421533,0.0005515270055400377,0.00064,5.0,,accepted — transfer confirmed on secondary control
+E009,XGBClassifier,raw + app_opens_per_day_is_missing,0.9638409282508003,0.0005225804123143663,2e-05,3.0,,"rejected (no consistent improvement, within noise)"

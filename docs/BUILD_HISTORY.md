@@ -249,7 +249,73 @@ and in `experiments/experiments.csv`.
 
 ## Build 4 - Hypothesis-Driven Feature Engineering
 
-Not started.
+**Objective:** Test the screen-time-component engineered features
+identified in Build 1 (`component_sum`, `screen_residual`) plus a
+missingness-flag candidate against the frozen Build 3 controls (XGBoost
+E004, CatBoost E002), and settle on a default Build 4+ feature set. No
+hyperparameter tuning, iteration-budget expansion, ensembling,
+adversarial validation, or generator-exploitation tricks in this build.
+
+**Work completed:**
+
+- Added `src/features.py`: `add_component_sum`, `add_screen_residual`,
+  `add_missing_flag` — pure, deterministic feature functions with no
+  model imports.
+- Added `tests/test_features.py` (13 tests: row count, missing
+  propagation, non-mutation, no target/id reference, stable output
+  names, train/test consistency, no infinities).
+- Wrote `notebooks/04_feature_engineering.ipynb`, which ran E005
+  (XGBoost + `component_sum`, isolated), E006 (XGBoost +
+  `screen_residual`, isolated), E007 (XGBoost + both, combined), E008
+  (CatBoost + `screen_residual`, transfer test on the frozen E002
+  config), and E009 (XGBoost + `app_opens_per_day_is_missing`); recorded
+  all five to `experiments/experiments.csv`; built a durable comparison
+  artifact (`outputs/feature_experiments.csv`); computed an OOF
+  correlation diagnostic between E006 and E008 (0.9877); ran a
+  lightweight feature-importance diagnostic; and generated + validated
+  `deliverables/E006_xgb_screen_residual_submission.csv`.
+
+**Major findings:**
+
+| Experiment | Model | Feature set | CV mean | CV std | Delta vs control | Folds improved | Elapsed |
+|---|---|---|---|---|---|---|---|
+| E005 | XGBClassifier | raw + component_sum | 0.96408 | 0.00056 | +0.00026 vs E004 | 5/5 | 789s |
+| E006 | XGBClassifier | raw + screen_residual | 0.96445 | 0.00056 | +0.00062 vs E004 | 5/5 | 849s |
+| E007 | XGBClassifier | raw + component_sum + screen_residual | 0.96443 | 0.00055 | +0.00061 vs E004 | 5/5 | 910s |
+| E008 | CatBoostClassifier | raw + screen_residual | 0.96104 | 0.00055 | +0.00064 vs E002 | 5/5 | 2436s (~41 min) |
+| E009 | XGBClassifier | raw + app_opens_per_day_is_missing | 0.96384 | 0.00052 | +0.00002 vs E004 | 3/5 | 628s |
+
+- `screen_residual` is the strongest and most consistent Build 4
+  candidate: clear gain on XGBoost (E006), and the gain transfers to
+  CatBoost at a near-identical magnitude (E008, +0.00064 vs E006's
+  +0.00062) — strong evidence the signal is model-independent, not an
+  XGBoost-specific artifact.
+- `component_sum` (E005) is a real but smaller gain in isolation, but
+  redundant once `screen_residual` is present: E007 (both features) is
+  statistically indistinguishable from E006 (`screen_residual` alone).
+- `app_opens_per_day_is_missing` (E009) shows no consistent improvement
+  (3/5 folds, mixed sign) — within noise, consistent with Build 1's
+  finding that missingness carries little target signal in this dataset.
+- Real notebook-execution results matched the session's pre-commit
+  scratch validation numbers to 5 decimal places across all five
+  experiments — no divergence to investigate.
+
+**Decisions made:** see `docs/DECISIONS.md` — `screen_residual` accepted
+into the default Build 4+ feature set; `component_sum` rejected as
+redundant (not as individually useless); `app_opens_per_day_is_missing`
+rejected as noise.
+
+**Validation/checks:** notebook run top-to-bottom from a clean kernel via
+`jupyter nbconvert --to notebook --execute --inplace` (total runtime
+~104 min, dominated by the ~41 min CatBoost fit), verified zero cell
+errors across all 16 code cells; `deliverables/E006_xgb_screen_residual_submission.csv`
+generated and validated in-notebook (296,302 rows, schema matches
+`data/sample_submission.csv`); `pytest tests/ -v` run directly, 48/48
+passing (35 prior + 13 new Build 4 tests).
+
+**Final status:** complete. Public LB score for E006 pending manual
+Kaggle upload — to be recorded in `experiments/experiments.csv` and here
+once provided.
 
 ## Build 5 - Synthetic-Generator Investigation
 
