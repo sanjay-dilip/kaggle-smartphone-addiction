@@ -17,7 +17,7 @@ that produced it, referenced below.
 | `E001_submission.csv` | E001 (Logistic Regression baseline) | `python -m src.generate_submission` | 0.91149 (std 0.00081) | 0.91358 |
 | `E002_submission.csv` | E002 (CatBoost, raw features) | `notebooks/03_model_benchmarks.ipynb` | 0.96040 (std 0.00051) | 0.96151 |
 | `E004_submission.csv` | E004 (XGBoost, raw features) | `notebooks/03_model_benchmarks.ipynb` | 0.96382 (std 0.00056) | 0.96539 |
-| `E006_xgb_screen_residual_submission.csv` | E006 (XGBoost + `screen_residual`) | `notebooks/04_feature_engineering.ipynb` | 0.96445 (std 0.00056) | pending |
+| `E006_xgb_screen_residual_submission.csv` | E006 (XGBoost + `screen_residual`) | `notebooks/04_feature_engineering.ipynb` | 0.96445 (std 0.00056) | 0.96608 |
 
 `E001_submission.csv` was produced by refitting the E001 pipeline
 (`src/preprocessing.py` + `LogisticRegression(max_iter=1000,
