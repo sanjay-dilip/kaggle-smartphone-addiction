@@ -120,3 +120,73 @@ model. Every other candidate - missingness encoding, near-duplicate
 lookup, frequency encoding - was tested and rejected on evidence. No new
 feature came out of it, and that's recorded as a real finding
 (`outputs/synthetic_generator_findings.csv`), not a gap in the work.
+
+## How to run the project
+
+```bash
+git clone <repo-url>
+cd kaggle-smartphone-addiction
+python -m venv <env-name>
+<env-name>\Scripts\activate        # Windows
+pip install -r requirements-dev.txt
+```
+
+Data isn't included - see `data/README.md` to get the three competition
+CSVs into `data/` first. Then:
+
+```bash
+pytest tests/
+jupyter notebook notebooks/
+```
+
+There's no dashboard or app here - the notebooks are the deliverable.
+Start with `notebooks/01_eda.ipynb` for the data audit, or
+`notebooks/05_synthetic_generator.ipynb` for the generator investigation.
+
+## Repository structure
+
+```text
+src/            reusable, accepted logic (imported by notebooks and tests)
+notebooks/      experimentation laboratory, one per build
+tests/          smoke checks and unit tests
+data/           competition CSVs (gitignored; see data/README.md)
+experiments/    experiment tracker (experiments.csv) and per-run artifacts
+deliverables/   submission-ready CSVs (see deliverables/CONTENTS.md)
+docs/           decision log, build history, competition notes
+outputs/        generated tables and artifacts
+```
+
+## What I learned
+
+- How much of "feature engineering" is really about characterizing a
+  relationship precisely enough to know why it works, not just
+  discovering that it does
+- That a synthetic dataset needs its own kind of audit - the questions
+  that matter for real-world data (is this leakage? is this bias?) get
+  replaced by generator-specific ones (is this an artifact of how the
+  data was made, and if so, is it safe and worthwhile to use?)
+- How much discipline a frozen control adds: every feature candidate this
+  project has tested was compared against the same fixed baseline under
+  the same CV split, which makes "did this actually help" a much less
+  slippery question to answer
+- That a negative result (a rejected feature, a null finding from a whole
+  build) is worth documenting as carefully as a positive one - the
+  decision log here has as many rejections as acceptances
+
+## Future improvements
+
+- Controlled hyperparameter tuning for XGBoost and CatBoost - CatBoost in
+  particular hasn't converged within its current iteration budget
+  (`best_iteration=799` every fold, capped, not stopped early)
+- Ensembling and blending across model families once tuning is done
+- Reconciling CV and public leaderboard scores more formally, since the
+  leaderboard only reflects a subset of the test set
+- A deliberate final submission strategy, rather than submitting whatever
+  the latest experiment happens to be
+- The README's data-source and setup sections could use a cold-clone test
+  (fresh venv, fresh clone, verbatim commands) before the project is
+  called complete
+
+## Contact
+
+[github.com/sanjay-dilip](https://github.com/sanjay-dilip)
