@@ -187,3 +187,54 @@ two candidate features against the frozen XGBoost (E004) and CatBoost
 
 Evidence trace: `experiments/experiments.csv` (E005-E009 rows) and
 `outputs/feature_experiments.csv`.
+
+## No Build 5 generator-inspired feature is accepted; `screen_residual` remains the only one
+
+Build 5 (`notebooks/05_synthetic_generator.ipynb`) investigated the
+Playground S6E8 synthetic generator across quantization, arithmetic
+structure, exact-value target rates, frequency, repeated/near-duplicate
+patterns, missingness structure, `id`/batch drift, and cross-feature
+constraints. Two real generator artifacts were confirmed:
+
+- The `daily_screen_time_hours >= social_media_hours + gaming_hours +
+  work_study_hours` compositional constraint (0 violations across
+  421,427 train and 182,287 test complete rows) — this is the mechanism
+  behind the already-accepted `screen_residual` feature, characterized
+  rather than newly discovered.
+- A `sleep_hours + daily_screen_time_hours` clipping artifact: the sum
+  never exceeds 24h but spikes sharply at exactly 20.00h (14,132/559,350
+  train rows, vs a few hundred at neighboring 0.01 steps), with
+  `sleep_hours` and `daily_screen_time_hours` nearly uncorrelated
+  (r=0.03). **Rejected as a feature**: target rate at the cap (0.9997) is
+  statistically indistinguishable from rows just below it (0.9995) —
+  fully redundant with `daily_screen_time_hours`, which the models
+  already use directly.
+
+No repeated-profile, near-duplicate, or missingness-pattern structure was
+found strong enough to justify a feature:
+
+- Missingness-pattern encoding: **rejected**. 2,925 of a ~4,096-pattern
+  space realized (consistent with near-independent per-column
+  missingness); target rate flat (0.696-0.719) across all well-supported
+  patterns/`row_missing_count` values.
+- Near-duplicate/profile-target-lookup on 0.1h-rounded screen-time
+  profiles: **rejected**. Groups with 5+ rows have target rates spanning
+  the full 0.0-1.0 range — a lookup feature here would fit sampling
+  noise, not signal.
+- Frequency encoding on `age`, `notifications_per_day`,
+  `app_opens_per_day`: **rejected**. Train/test value-frequency
+  distributions are highly stable (corr 0.995-0.999) but carry no
+  independent target signal (Spearman corr with target rate near zero
+  once each value's own effect is accounted for).
+
+No Bucket 3 (lookup-like/source-reconstruction) or Bucket 2
+(transductive) technique was implemented. Source-data fingerprint
+assessment: **weak evidence** — real generator structure exists (the two
+constraints above) but every check for template reuse or a small latent
+source dataset returned negative. No formal Phase B model experiment was
+run; E006 (XGBoost + `screen_residual`, CV mean 0.96445, public LB
+0.96608) remains the best validated model, unchanged by Build 5.
+
+Evidence trace: `outputs/synthetic_generator_findings.csv`,
+`outputs/numeric_quantization_audit.csv`,
+`outputs/generator_constraints.csv`.

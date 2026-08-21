@@ -1,0 +1,10 @@
+feature,n_unique_train,n_unique_test,dominant_precision,min_gap,frac_on_dominant_grid,boundary_mass,min_train,max_train,min_test,max_test
+age,18,18,1.0,1.0,1.0,0.10234,18.0,35.0,18.0,35.0
+daily_screen_time_hours,1389,1349,0.01,0.002,0.99856,0.00044,0.5,15.0,0.5,15.0
+social_media_hours,721,703,0.01,0.01,1.0,2e-05,0.0,8.0,0.0,7.85
+gaming_hours,401,401,0.01,0.01,1.0,0.00021,0.0,4.0,0.0,4.0
+work_study_hours,600,601,0.01,0.01,1.0,2e-05,0.0,6.0,0.0,6.0
+sleep_hours,451,451,0.01,0.01,1.0,0.00029,4.5,9.0,4.5,9.0
+notifications_per_day,231,231,1.0,1.0,1.0,0.00629,20.0,250.0,20.0,250.0
+app_opens_per_day,166,166,1.0,1.0,1.0,0.01097,15.0,180.0,15.0,180.0
+weekend_screen_time,1437,1404,0.01,0.0035,0.999304,3e-05,0.51,17.56,0.51,17.56
