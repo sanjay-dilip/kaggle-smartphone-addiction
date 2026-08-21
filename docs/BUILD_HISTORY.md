@@ -324,7 +324,105 @@ in `experiments/experiments.csv`.
 
 ## Build 5 - Synthetic-Generator Investigation
 
-Not started.
+**Objective:** forensic investigation of whether the Playground S6E8
+synthetic dataset contains repeatable generator structure that is real,
+measurable, understandable, relevant to modeling/validation, and
+rules-compliant to exploit — distinguishing ordinary predictive
+relationships from generator artifacts, and only proposing formal model
+experiments if Phase A found a strong, explainable, rules-compliant
+candidate. No hyperparameter tuning, ensembling, or final submission
+strategy in this build.
+
+**Work completed:**
+
+- Wrote `notebooks/05_synthetic_generator.ipynb`, a 15-section forensic
+  audit covering: a revisit of prior (Build 1/4) synthetic-structure
+  evidence, numeric quantization/precision, `screen_residual` arithmetic
+  structure, exact-value target-rate analysis (with a 200-row minimum
+  support threshold), value-frequency analysis, cross-feature repeated
+  patterns, near-duplicate analysis, missingness-pattern structure,
+  `id`/batch structure, cross-feature constraints, a source-data
+  fingerprint assessment, a rules/risk classification table, ranked
+  candidate hypotheses, and Phase B justification (none run).
+- Added `outputs/numeric_quantization_audit.csv` (grid/precision per
+  numeric feature), `outputs/generator_constraints.csv` (four
+  semantically-justified constraint checks with train/test violation
+  rates), and `outputs/synthetic_generator_findings.csv` (10 findings,
+  each with evidence, train/test behavior, target relationship, modeling
+  relevance, risk level, and recommended action).
+- No changes to `src/` — no new reusable generator-derived feature
+  cleared the evidence bar, so no new feature function was added and no
+  new tests were required.
+
+**Major findings:**
+
+- **F01 (screen-time composition, real/understood/already exploited):**
+  `daily_screen_time_hours >= social_media_hours + gaming_hours +
+  work_study_hours` holds exactly in both splits (0/421,427 train,
+  0/182,287 test violations). `screen_residual` (the slack) is
+  continuous on a clean 0.01 grid, 1,022 distinct values, right-skewed
+  (mean 1.34h), never meaningfully negative, KS-consistent between train
+  and test (p≈0.39), and strongly related to the target (mean 0.64h for
+  `addicted_label==0` vs 1.63h for `addicted_label==1`, Spearman
+  corr(exact value, target rate)=0.75 among well-supported values). This
+  characterizes, rather than extends, the already-accepted Build 4
+  feature.
+- **F02 (sleep/screen-time clipping, real generator fingerprint, not
+  actionable):** `sleep_hours + daily_screen_time_hours` never exceeds
+  24h but spikes sharply at exactly 20.00h (2.53% of complete train
+  rows). `sleep_hours` and `daily_screen_time_hours` are nearly
+  uncorrelated (r=0.03), consistent with independent draws plus a
+  post-hoc joint clip. Target rate at the cap is statistically
+  indistinguishable from rows just below it — the effect is fully
+  explained by `daily_screen_time_hours` alone. Rejected as a feature.
+- **F03 (rounded `daily_screen_time_hours` staircase, ordinary predictive
+  relationship):** target rate rises smoothly and near-monotonically from
+  ~21% (1.0h bin) to 100% (13-14h bins) across 28 well-supported 0.5h
+  bins — the dataset's dominant signal (known since Build 1), already
+  captured optimally by tree-based splits.
+- **F05-F08 (no repeated-profile/near-duplicate/missingness-pattern
+  structure):** the 4-column screen-time combination is 99.99% unique at
+  native (0.01) precision (max repeat group size 3); 0.1h-rounded groups
+  of 5+ rows have target rates spanning the full 0.0-1.0 range;
+  missingness realizes 2,925 of a ~4,096-pattern combinatorial space with
+  flat target rates throughout (0.696-0.719); value-frequency is stable
+  between train/test (corr 0.995-0.999) but target-uncorrelated. Every
+  check argues against a small, reusable source-data template.
+- **F09 (`id`/batch, reconfirms Build 1):** `screen_residual` and
+  `row_missing_count` means are both flat across 20 `id` bins — no
+  batching or generator drift evidence.
+- **F10 (source-data fingerprint assessment): weak evidence.** Real
+  generator structure exists (F01, F02) but no evidence supports
+  reconstructing or exploiting a smaller latent source dataset.
+- **Candidate hypotheses (G001-G005):** all rejected or non-actionable on
+  Phase A evidence alone — no candidate reached the bar for a formal
+  Phase B model experiment. This is a valid, and in this case the actual,
+  Build 5 outcome per the build's own scope definition.
+
+**Decisions made:** see `docs/DECISIONS.md` ("No Build 5 generator-inspired
+feature is accepted..." section) — sleep/screen-time at-cap flag,
+missingness-pattern encoding, near-duplicate/profile-target-lookup, and
+frequency encoding on `age`/`notifications_per_day`/`app_opens_per_day`
+all rejected; `screen_residual` remains the sole accepted generator-derived
+feature.
+
+**Rules/transductive assessment:** no Bucket 3 (lookup-like) or Bucket 2
+(transductive) technique was implemented. The one train+test-frequency
+idea considered was rejected on evidence before any rules question became
+live. No external private data, leaked labels, hidden test labels, other
+competitors' outputs, or unauthorized source reconstruction were used.
+
+**Formal Build 5 experiments:** none run. E006 (XGBoost +
+`screen_residual`, CV mean 0.96445, public LB 0.96608) remains the best
+validated model and best public LB score, unchanged by this build.
+
+**Validation/checks:** notebook run top-to-bottom from a clean kernel via
+`jupyter nbconvert --to notebook --execute --inplace`, verified zero cell
+errors across all 23 code cells; `pytest tests/ -v` run directly, 48/48
+passing (no new tests required — no new `src/` code was introduced).
+
+**Final status:** complete. No public LB submission from this build (no
+new candidate feature was accepted, so no new deliverable was generated).
 
 ## Build 6 - Controlled Hyperparameter Tuning
 

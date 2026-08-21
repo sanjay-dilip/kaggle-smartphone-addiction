@@ -62,3 +62,20 @@ recommendations were produced in Build 1 — see
 - No exact or predictor-only duplicate rows were found within train or
   within test; no leakage was found. See `notebooks/01_eda.ipynb`,
   Sections 5 and 14.
+- All continuous hour-based predictors sit on a clean 0.01 grid (negligible
+  float noise, under 5 rows per split); `age`, `notifications_per_day`, and
+  `app_opens_per_day` are exact integer grids. Train and test use identical
+  grids and ranges. See `notebooks/05_synthetic_generator.ipynb`, Section 3,
+  and `outputs/numeric_quantization_audit.csv`.
+- `sleep_hours + daily_screen_time_hours` never exceeds 24h and empirically
+  caps at ~20h with a sharp frequency spike exactly at 20.00h — a real
+  generator clipping fingerprint, but redundant with `daily_screen_time_hours`
+  for modeling purposes (target rate at the cap is statistically
+  indistinguishable from rows just below it). See
+  `notebooks/05_synthetic_generator.ipynb`, Section 10, and
+  `outputs/generator_constraints.csv`.
+- Build 5's broader forensic investigation (quantization, repeated/near-
+  duplicate patterns, missingness structure, `id`/batch drift, source-data
+  fingerprint) found no evidence supporting a small, reusable latent source
+  dataset — see `docs/BUILD_HISTORY.md` (Build 5 entry) for the full
+  finding list.
