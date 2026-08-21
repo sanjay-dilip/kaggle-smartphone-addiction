@@ -83,3 +83,40 @@ yourself after accepting the competition rules on Kaggle.
 Every predictor column has some missingness (4-19% depending on the
 column), and the target is moderately imbalanced (71% positive). Both are
 handled explicitly in the preprocessing rather than assumed away.
+
+---
+
+## Results / outcomes
+
+| Experiment | Model | Feature set | CV mean ROC AUC | Public LB |
+|---|---|---|---|---|
+| E001 | Logistic Regression | raw predictors | 0.91149 (std 0.00081) | 0.91358 |
+| E002 | CatBoost | raw predictors | 0.96040 (std 0.00051) | 0.96151 |
+| E004 | XGBoost | raw predictors | 0.96382 (std 0.00056) | 0.96539 |
+| **E006** | **XGBoost** | **raw + `screen_residual`** | **0.96445 (std 0.00056)** | **0.96608** |
+
+E006 is the current best model and the frozen control for everything
+after it. `screen_residual` - the gap between `daily_screen_time_hours`
+and the sum of its three named components - was found during EDA,
+tested in isolation against both XGBoost and CatBoost, and only accepted
+once it showed a consistent gain on both (+0.00062 and +0.00064
+respectively, 5/5 folds improved each time). A second candidate feature
+built from the same relationship (`component_sum`) was tested and
+rejected as redundant once `screen_residual` was already in the model -
+that negative result is recorded too, not just the win.
+
+Every number above traces to a committed artifact
+(`experiments/experiments.csv`, `outputs/model_benchmarks.csv`,
+`outputs/feature_experiments.csv`), not a remembered figure.
+
+**Synthetic-generator investigation (Build 5):** ran a full forensic audit
+of the dataset's generation process - numeric precision grids, the
+screen-time compositional constraint behind `screen_residual`, exact-value
+target rates, repeated and near-duplicate profiles, missingness patterns,
+ID drift, and cross-feature constraints. Found one previously-uncharted
+generator artifact (`sleep_hours + daily_screen_time_hours` clips near
+20h) and confirmed it's fully redundant with a feature already in the
+model. Every other candidate - missingness encoding, near-duplicate
+lookup, frequency encoding - was tested and rejected on evidence. No new
+feature came out of it, and that's recorded as a real finding
+(`outputs/synthetic_generator_findings.csv`), not a gap in the work.
