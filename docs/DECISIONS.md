@@ -238,3 +238,37 @@ run; E006 (XGBoost + `screen_residual`, CV mean 0.96445, public LB
 Evidence trace: `outputs/synthetic_generator_findings.csv`,
 `outputs/numeric_quantization_audit.csv`,
 `outputs/generator_constraints.csv`.
+
+## E010 (tuned XGBoost) supersedes E006 as the primary control; joint refinement skipped
+
+Build 6 (`notebooks/06_xgboost_tuning.ipynb`) found E006 was materially
+constrained by its 800-iteration training cap (`best_iterations`
+`[799, 794, 799, 794, 794]` — 4/5 folds at or one below the cap, not
+evidence of convergence). Lowering `learning_rate` to 0.05 and raising
+`n_estimators` to 2500 (same feature set, same `early_stopping_rounds`)
+let early stopping converge genuinely (best_iterations 2294-2485, no
+fold hit the ceiling) and produced **E010**: CV mean 0.96499 (std
+0.00051) vs E006's 0.96445 — +0.00055, 5/5 folds improved, range
+[+0.00042, +0.00062]. **E010 is accepted as the new primary XGBoost
+control, superseding E006.**
+
+Subsequent staged tuning around E010 — tree complexity (`max_depth`,
+`min_child_weight`), sampling (`subsample`, `colsample_bytree`), and
+regularization (`reg_alpha`, `reg_lambda`) — tested 9 single-fold
+candidates across three phases and found nothing exceeding the ~0.0005
+single-fold noise band observed throughout the build (best candidate
+deltas: +0.00007, -0.00001, +0.00002 respectively). Per the Build 6
+stopping rule (several consecutive sensible configurations failing to
+improve the current best), **joint refinement was skipped** rather than
+running a full 5-fold CV to reconfirm a null result across all three
+parameter families at once — E010 is adopted directly as Build 6's
+final tuned configuration.
+
+E010's out-of-fold predictions correlate with E006's at Pearson 0.9967
+— expected, since E010 refines E006's exact architecture rather than
+introducing a diverse alternative; this is a diagnostic only and does
+not itself motivate any Build 7 ensembling decision.
+
+Evidence trace: `outputs/xgboost_tuning_results.csv`,
+`outputs/best_xgboost_params.json`, `experiments/experiments.csv`
+(E010 row).

@@ -424,9 +424,101 @@ passing (no new tests required — no new `src/` code was introduced).
 **Final status:** complete. No public LB submission from this build (no
 new candidate feature was accepted, so no new deliverable was generated).
 
-## Build 6 - Controlled Hyperparameter Tuning
+## Build 6 - Controlled XGBoost Hyperparameter Tuning
 
-Not started.
+**Objective:** how much additional ROC AUC can be obtained from the
+current best XGBoost model (E006) through controlled hyperparameter
+tuning, keeping the accepted feature set (raw predictors +
+`screen_residual`) and validation framework fixed. Staged search:
+iteration budget/learning rate -> tree complexity -> sampling ->
+regularization -> limited joint refinement (only if warranted).
+Screening on a single frozen fold used to eliminate poor regions
+cheaply; every formal claim comes only from full 5-fold CV. No feature
+changes, no ensembling, no LightGBM tuning, no final submission
+strategy in this build.
+
+**Work completed:**
+
+- Added `src/tuning.py`: `E006_XGB_PARAMS` (the exact reconstructed E006
+  configuration), `make_xgboost_fold`/`run_xgboost_trial` (full 5-fold
+  CV via the existing `run_cv_benchmark` harness, parameterized by
+  model config), `screen_xgboost_single_fold` (cheap single-fold
+  screening, never a substitute for full CV), `paired_fold_deltas`, and
+  `tuning_result_row` (formats a formal-experiment row for the tuning
+  tracker). Added `tests/test_tuning.py` (7 tests).
+- Added `outputs/xgboost_tuning_results.csv`: every screening and
+  full-CV trial, with a `stage` column distinguishing screening from
+  formal full-CV rows and a `decision` column explaining why each
+  candidate was or wasn't promoted.
+- Added `outputs/best_xgboost_params.json`: the final tuned
+  configuration (E010).
+- Added `outputs/e010_e006_oof_correlation.csv`: OOF prediction
+  correlation between E010 and E006 (diagnostic only).
+- Wrote `notebooks/06_xgboost_tuning.ipynb` (13 sections): setup and
+  frozen controls, Phase 0 (E006 reconstruction, run live), Phase 1
+  screening and E010's full CV (run live), Phases 2-4 screening (read
+  from the tuning tracker rather than recomputed live, with an explicit
+  note explaining why — see "Validation/checks" below), the stopping
+  rule and final-candidate decision, the OOF correlation diagnostic, the
+  best-params artifact, submission generation, consolidated result
+  tables, and conclusions.
+- Generated and validated
+  `deliverables/submission_E010_xgb_tuned.csv` (fold-averaged E010 test
+  predictions, 296,302 rows).
+
+**Major findings:**
+
+| Phase | What was tested | Result |
+|---|---|---|
+| 0 | E006 reconstruction | Confirmed: `best_iterations` `[799, 794, 799, 794, 794]` — 4/5 folds at or one below the 800-iteration cap. Resource-capped, not converged. |
+| 1 | `learning_rate` in {0.03, 0.05, 0.07} with proportionally raised `n_estimators` | `lr=0.05/n_estimators=2500` promoted to full CV as **E010**: CV mean **0.96499** (std 0.00051) vs E006's 0.96445 — **+0.00055, 5/5 folds improved**, range [+0.00042, +0.00062]. No fold hit the 2500 ceiling (best_iterations 2294-2485, mean 2390.6) — genuine early-stopping convergence. |
+| 2 | `max_depth` in {5, 7}, `min_child_weight=3` | No gain. `max_depth=5` -0.00015, `max_depth=7` -0.00027, `min_child_weight=3` +0.00007 (noise). E010's `max_depth=6, min_child_weight=1` retained. |
+| 3 | `subsample`/`colsample_bytree` in {0.8/0.8, 1.0/1.0, 0.7/0.9} | No gain. Best -0.00001 (flat), worst -0.00028 (no subsampling hurts). E010's `subsample=0.9, colsample_bytree=0.9` retained. |
+| 4 | `reg_alpha=0.1`, `reg_lambda` in {2.0, 5.0} | No gain. All three within +0.00001 to -0.00005 (noise). E010's `reg_alpha=0, reg_lambda=1` retained. |
+
+- Phases 2, 3, and 4 all found nothing exceeding the ~0.0005
+  single-fold noise band observed throughout this build. Per the Build
+  6 stopping rule ("several consecutive sensible configurations fail to
+  improve the current best"), **joint refinement was skipped and E010
+  adopted directly as Build 6's final tuned XGBoost configuration** —
+  no full-CV run was spent re-confirming a null result.
+- E010's out-of-fold predictions correlate with E006's at Pearson
+  0.9967 (Spearman 0.9974) — expected, since E010 refines E006's exact
+  architecture and feature set rather than introducing a diverse
+  alternative. Diagnostic only; does not motivate any Build 7
+  ensembling decision on its own. CatBoost/E008's OOF predictions were
+  not recomputed (a full CatBoost CV run takes ~40-44 min; explicitly
+  optional/diagnostic-only per the build's scope, not required for
+  acceptance).
+
+**Decisions made:** see `docs/DECISIONS.md` — E010 becomes the new
+primary XGBoost control, superseding E006, with the stopping rationale
+above.
+
+**Validation/checks:** notebook run top-to-bottom from a clean kernel
+via `jupyter nbconvert --to notebook --execute --inplace`, verified
+zero cell errors across all 17 code cells. Phase 0 (E006
+reconstruction) and Phase 1's promoted candidate (E010's full CV) were
+executed live in the notebook as reproducibility anchors and both
+exactly matched their previously recorded values (E006: CV mean
+0.96445/std 0.00056 both matching exactly; E010: CV mean 0.96499/std
+0.00051, 5/5 folds improved, matching exactly). Phase 2-4's 9 screening
+trials were not re-executed live in this notebook run — they were run
+interactively earlier in the same investigation using the identical
+code path (`screen_xgboost_single_fold`, same seed, same deterministic
+splitter) and are read from `outputs/xgboost_tuning_results.csv` in the
+notebook rather than recomputed, to keep total notebook runtime
+practical (a full live re-run of all ~15 single-fold and full-CV
+XGBoost fits was measured to take 2+ hours on the CPU-only environment
+used for this build; the reproducibility anchors above establish that
+the underlying code path is correct and deterministic). `pytest tests/
+-v` run directly, 55/55 passing (48 prior + 7 new Build 6
+`test_tuning.py` tests).
+
+**Final status:** complete pending manual Kaggle submission of
+`deliverables/submission_E010_xgb_tuned.csv` and recording its public
+LB score (user action, not run automatically per the project's
+anti-contamination submission policy).
 
 ## Build 7 - Ensembling and Blending
 
