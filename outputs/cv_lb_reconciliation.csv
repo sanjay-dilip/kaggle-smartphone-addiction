@@ -1,0 +1,6 @@
+experiment_id,model,feature_set,cv_mean,cv_std,public_lb,lb_minus_cv,cv_rank,lb_rank,submission_date,build
+E001,LogisticRegression,raw_predictors,0.91149,0.00081,0.91358,0.00209,5,5,2026-08-17,Build 2
+E002,CatBoostClassifier,raw_predictors,0.9604,0.00051,0.96151,0.00111,4,4,2026-08-17,Build 3
+E004,XGBClassifier,raw_predictors,0.96382,0.00056,0.96539,0.00157,3,3,2026-08-17,Build 3
+E006,XGBClassifier,raw + screen_residual,0.96445,0.00056,0.96608,0.00163,2,2,2026-08-20,Build 4
+E010,XGBClassifier,raw + screen_residual,0.96499,0.00051,0.96653,0.00154,1,1,2026-08-21,Build 6

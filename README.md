@@ -152,6 +152,20 @@ run anyway. E010 remains the best model - a negative result, evidenced
 end to end (`outputs/ensemble_prediction_correlations.csv`,
 `outputs/ensemble_results.csv`) rather than assumed.
 
+**CV vs leaderboard reconciliation (Build 8):** checked whether local
+cross-validation has actually been trustworthy across every submitted
+experiment (E001, E002, E004, E006, E010), rather than assuming it. CV
+and public leaderboard rank every submission identically (Spearman =
+Kendall = 1.0, no inversions), and every CV improvement was confirmed by
+a leaderboard improvement in the same direction, including E010's small
+final gain over E006. No submission or parameter choice in this
+project's history was ever driven by a leaderboard score rather than CV
+- confirmed from the actual decision history, not asserted
+(`outputs/cv_lb_reconciliation.csv`). The one caveat: the entire winning
+lineage is a single model family (XGBoost), since Build 7 found no
+ensemble beats it - a real, disclosed private-leaderboard risk factor,
+not a reason to distrust the CV-driven process itself.
+
 ## How to run the project
 
 ```bash

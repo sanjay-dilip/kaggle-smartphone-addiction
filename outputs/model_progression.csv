@@ -1,0 +1,5 @@
+from_experiment,to_experiment,delta_cv,delta_lb,transfer_ratio,direction_match,key_change,reason
+E001,E002,0.04891,0.04793,0.98,True,"CatBoost benchmark submitted alongside E004 (same Build 3 sweep, not a lineage step from E001)","Benchmark model-family diversity against XGBoost -- a sibling comparison, not an ancestor of E004"
+E002,E004,0.00342,0.00388,1.135,True,"XGBoost benchmark (raw predictors) -- outperformed CatBoost (E002), became the primary control",Outperformed CatBoost on identical raw features -- became the lineage this project pursued further
+E004,E006,0.00063,0.00069,1.095,True,"Evidence-backed feature added to E004 (screen_residual, from Build 1 EDA)","screen_residual showed a consistent gain in Build 4 testing (+0.00062 vs E004, 5/5 folds), confirmed to transfer to CatBoost too"
+E006,E010,0.00054,0.00045,0.833,True,"Controlled hyperparameter tuning of E006 (learning_rate 0.1->0.05, n_estimators 800->2500) -- fixed an iteration-cap constraint found in E006",E006 was found materially iteration-constrained (best_iterations at/near its 800-round cap in 4/5 folds); raising the ceiling let early stopping converge genuinely
