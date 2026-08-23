@@ -18,11 +18,10 @@ real effort asking what's true about *this generator specifically* -
 where the signal actually sits, whether it's exploitable, and whether
 exploiting it would even be legitimate.
 
-Current state: six builds in, best validated model at CV mean ROC AUC
-0.96499 (public leaderboard 0.96653), reached via controlled XGBoost
-hyperparameter tuning on top of a full audit of the generator's structure
-that found no further exploitable signal beyond what's already in the
-model.
+Current state: seven builds in, best validated model still at CV mean
+ROC AUC 0.96499 (public leaderboard 0.96653), reached via controlled
+XGBoost hyperparameter tuning. A subsequent ensembling investigation
+found no combination of models that beats it - see below.
 
 ## Why I built this
 
@@ -138,6 +137,20 @@ were screened on a single fold each and rejected as noise before reaching
 a full CV run, per the build's stopping rule. E010 became the new frozen
 control (`outputs/xgboost_tuning_results.csv`,
 `outputs/best_xgboost_params.json`).
+
+**Ensembling investigation (Build 7):** tested whether combining E010
+with CatBoost (`screen_residual`), a pre-tuned XGBoost, and LightGBM
+(raw features) could beat E010 alone. CatBoost and LightGBM are each
+genuinely diverse from E010 - correlated overall (~0.985 Pearson) but
+disagreeing on 28-33% of the highest-probability decile, the region that
+matters most for ROC AUC - yet individually about 0.004 AUC below it, a
+gap too large for that diversity to net a gain once weighted to avoid
+dragging the blend down. Equal-weight, weighted-grid, and rank-averaged
+blends were all tested; none reached a meaningful improvement, so a
+three-model blend and stacking were both explicitly skipped rather than
+run anyway. E010 remains the best model - a negative result, evidenced
+end to end (`outputs/ensemble_prediction_correlations.csv`,
+`outputs/ensemble_results.csv`) rather than assumed.
 
 ## How to run the project
 

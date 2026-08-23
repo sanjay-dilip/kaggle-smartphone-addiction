@@ -738,9 +738,11 @@ bar for a "formal experiment" (adopted config + submission), mirroring
 Build 6's precedent of keeping screening-only trials out of
 `experiments.csv` and recording them only in the trial tracker.
 
-**Final status:** analysis complete. E010 remains the frozen best model
-and best public LB (0.96653), unchanged by Build 7. Remaining work:
-Phase 11 (test suite), Phase 12 (notebook), Phase 13-14 (final docs/PR).
+**Final status:** complete. E010 remains the frozen best model and best
+public LB (0.96653), unchanged by Build 7. `notebooks/07_ensemble.ipynb`
+run top-to-bottom via papermill, zero cell errors. `pytest tests/ -v`:
+71/71 passing (55 prior + 16 new `tests/test_ensembling.py` tests). No
+new features, no base-model hyperparameters changed.
 
 ## Build 8 - CV vs Leaderboard Reconciliation
 
