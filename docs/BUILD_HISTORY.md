@@ -727,6 +727,21 @@ sufficiently different errors + measurable CV improvement when combined
 + reasonable leaderboard behavior) -- the third criterion was never met
 by any candidate.
 
+**Submission selection (Phase 10): no Build 7 submission.** Per the
+brief's own "do not submit dominated blends" rule and the core finding
+above, no blend earns a Kaggle submission this build -- E010's standing
+public LB (0.96653) remains the reference. Confirmed with the user
+rather than assumed, given it closes off the build's headline question.
+No new row was added to `experiments/experiments.csv`: none of the
+eleven blend/rank trials in `outputs/ensemble_results.csv` cleared the
+bar for a "formal experiment" (adopted config + submission), mirroring
+Build 6's precedent of keeping screening-only trials out of
+`experiments.csv` and recording them only in the trial tracker.
+
+**Final status:** analysis complete. E010 remains the frozen best model
+and best public LB (0.96653), unchanged by Build 7. Remaining work:
+Phase 11 (test suite), Phase 12 (notebook), Phase 13-14 (final docs/PR).
+
 ## Build 8 - CV vs Leaderboard Reconciliation
 
 Not started.
