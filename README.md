@@ -18,10 +18,11 @@ real effort asking what's true about *this generator specifically* -
 where the signal actually sits, whether it's exploitable, and whether
 exploiting it would even be legitimate.
 
-Current state: five builds in, best validated model at CV mean ROC AUC
-0.96445 (public leaderboard 0.96608), with a full audit of the generator's
-structure completed and no further exploitable signal found beyond what's
-already in the model.
+Current state: six builds in, best validated model at CV mean ROC AUC
+0.96499 (public leaderboard 0.96653), reached via controlled XGBoost
+hyperparameter tuning on top of a full audit of the generator's structure
+that found no further exploitable signal beyond what's already in the
+model.
 
 ## Why I built this
 
@@ -93,10 +94,14 @@ handled explicitly in the preprocessing rather than assumed away.
 | E001 | Logistic Regression | raw predictors | 0.91149 (std 0.00081) | 0.91358 |
 | E002 | CatBoost | raw predictors | 0.96040 (std 0.00051) | 0.96151 |
 | E004 | XGBoost | raw predictors | 0.96382 (std 0.00056) | 0.96539 |
-| **E006** | **XGBoost** | **raw + `screen_residual`** | **0.96445 (std 0.00056)** | **0.96608** |
+| E006 | XGBoost | raw + `screen_residual` | 0.96445 (std 0.00056) | 0.96608 |
+| **E010** | **XGBoost (tuned)** | **raw + `screen_residual`** | **0.96499 (std 0.00051)** | **0.96653** |
 
-E006 is the current best model and the frozen control for everything
-after it. `screen_residual` - the gap between `daily_screen_time_hours`
+E010 is the current best model: same feature set and architecture as
+E006, with `learning_rate` lowered to 0.05 and `n_estimators` raised to
+2500 after E006 was found to be iteration-constrained (hitting or nearly
+hitting its 800-iteration cap in 4/5 folds). `screen_residual` - the gap
+between `daily_screen_time_hours`
 and the sum of its three named components - was found during EDA,
 tested in isolation against both XGBoost and CatBoost, and only accepted
 once it showed a consistent gain on both (+0.00062 and +0.00064
@@ -120,6 +125,19 @@ model. Every other candidate - missingness encoding, near-duplicate
 lookup, frequency encoding - was tested and rejected on evidence. No new
 feature came out of it, and that's recorded as a real finding
 (`outputs/synthetic_generator_findings.csv`), not a gap in the work.
+
+**Controlled XGBoost tuning (Build 6):** with the feature set frozen,
+tuned E006's XGBoost hyperparameters under a fixed CV harness. Diagnosed
+E006 as iteration-constrained rather than converged (`best_iteration` at
+or one below its 800-iteration cap in 4/5 folds), then confirmed that
+lowering the learning rate and raising the iteration ceiling (E010:
+`learning_rate=0.05`, `n_estimators=2500`) let early stopping find a true
+optimum - CV mean 0.96499 vs 0.96445, 5/5 folds improved, no fold hit the
+new ceiling. Nine further candidates (tree depth, sampling, regularization)
+were screened on a single fold each and rejected as noise before reaching
+a full CV run, per the build's stopping rule. E010 became the new frozen
+control (`outputs/xgboost_tuning_results.csv`,
+`outputs/best_xgboost_params.json`).
 
 ## How to run the project
 
