@@ -1,0 +1,12 @@
+trial_id,method,component_models,weights,oof_auc,delta_vs_e010,pearson_vs_e010,decision
+eq-E010-E008,equal_weight_blend,E010+E008,0.5/0.5,0.96414,-0.00085,0.9849,Worse
+eq-E010-E003,equal_weight_blend,E010+E003,0.5/0.5,0.96417,-0.00082,0.9849,Worse
+eq-E010-E006,equal_weight_blend,E010+E006,0.5/0.5,0.96495,-4e-05,0.9967,Flat
+eq-E008-E003,equal_weight_blend,E008+E003,0.5/0.5,0.96187,-0.00312,,Worse
+wt-E010-E008-90-10,weighted_blend,E010+E008,0.90/0.10,0.96498,-1e-05,0.9849,"Flat (best point, plateaus at E010)"
+wt-E010-E003-90-10,weighted_blend,E010+E003,0.90/0.10,0.96498,-1e-05,0.9849,"Flat (best point, plateaus at E010)"
+wt-E010-E006-80-20,weighted_blend,E010+E006,0.80/0.20,0.96503,4e-05,0.9967,"Flat (5/5 folds improved but each <0.0001, within Build 6 noise band; CV std unchanged)"
+wt-E008-E003-50-50,weighted_blend,E008+E003,best of coarse grid (0.3-0.7),0.96187,-0.00312,,Worse (never approaches E010 at any weight tested)
+rank-E010-E006-80-20,rank_blend,E010+E006,0.80/0.20,0.96503,4e-05,0.9967,"Flat; matches probability blend exactly, no advantage to rank averaging"
+gate-three-model,gate_decision,E010+E008+E003,,,,,Skipped -- gate requires both E010+E008 and E010+E003 to show real two-model gains first; neither did (both Flat at best)
+gate-stacking,gate_decision,E010+E008+E006+E003,,,,,Rejected -- exhaustive weight grid across every pair already found no region above E010; a linear stacker over the same probability inputs cannot discover more than that grid already explored

@@ -272,3 +272,62 @@ not itself motivate any Build 7 ensembling decision.
 Evidence trace: `outputs/xgboost_tuning_results.csv`,
 `outputs/best_xgboost_params.json`, `experiments/experiments.csv`
 (E010 row).
+
+## Build 7 — Ensembling / Blending
+
+**Candidate pool: E010, E008, E006, E003 (4 active).** E001, E002, E005,
+E007, E009 excluded as dominated (same model with a strictly worse
+feature set, or a rejected feature, or too weak individually — see
+`docs/BUILD_HISTORY.md`'s Build 7 entry for the full inventory).
+
+**E006 retained in the pool despite suspected redundancy, tested anyway.**
+Its 0.9967 Pearson correlation with E010 (measured in Build 6) predicted
+minimal blend value; Phase 3's fuller diversity analysis confirmed it —
+lowest mean abs diff (0.0151) and lowest top/bottom-decile disagreement
+(0.104/0.056) of all six pairs measured, by a wide margin. Blending it
+with E010 answers the brief's explicit question ("does the pre-tuned
+XGBoost add anything despite being same-family") with a clear no: best
+blend point +0.00004 vs E010, inside the ~0.0005 noise band.
+
+**CatBoost (E008) and LightGBM (E003) both confirmed as genuinely
+diverse relative to E010** (~0.985 Pearson, but 28-33% top-decile
+disagreement — meaningful disagreement precisely where ROC AUC is most
+sensitive) **and diverse from each other** (42.5% top-decile
+disagreement between E008 and E003, the highest of any pair measured).
+This diversity is real, not an artifact of one weak, low-correlation
+outlier — both are individually strong (CV ~0.961, ~0.004 below E010).
+
+**Probability blending chosen as the primary method; rank averaging
+tested and found equivalent, not superior.** At every weight tested,
+rank-averaged blends scored within 0.00001 of the corresponding
+probability blend. No calibration difference between these four models
+is large enough for rank transformation to matter.
+
+**No ensemble beats E010 — this is Build 7's core finding.** Equal-weight
+blends of E010 with either diverse candidate are mechanically Worse
+(averaging in a ~0.004-weaker model pulls the mean down); the weighted
+grid (E010 weight 0.5-0.95) shows both E010+E008 and E010+E003
+monotonically approaching, but never exceeding, E010's own OOF AUC as
+E010's weight rises. E008+E003 (no E010 component) never comes close to
+E010 at any weight. **Rejected: any blend as the Build 7 candidate** —
+none clears the Core Build 7 Rule's "measurable CV improvement" bar.
+
+**Three-model blend (E010+E008+E003): rejected, not attempted.** The
+brief's own gate requires both constituent pairs to show real two-model
+gains first; neither did.
+
+**Stacking: rejected as unnecessary.** The weighted grid already searched
+the full linear combination space across every pair and found no region
+above E010. A `LogisticRegression` meta-model over the same probability
+inputs is itself a linear combination of them — it cannot find a
+solution that dense grid search over that exact space did not already
+rule out. Implementing leakage-safe nested-CV stacking machinery to
+re-confirm this would add complexity without evidentiary value.
+
+**E010 remains the frozen best model entering Build 8**, unchanged by
+Build 7. Its public LB (0.96653) stands as the reference until Build 8
+examines CV/LB reconciliation directly.
+
+Evidence trace: `outputs/ensemble_prediction_correlations.csv`,
+`outputs/ensemble_results.csv`, `outputs/oof_predictions/`,
+`outputs/test_predictions/`.
