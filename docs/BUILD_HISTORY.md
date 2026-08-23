@@ -515,10 +515,10 @@ the underlying code path is correct and deterministic). `pytest tests/
 -v` run directly, 55/55 passing (48 prior + 7 new Build 6
 `test_tuning.py` tests).
 
-**Final status:** complete pending manual Kaggle submission of
-`deliverables/submission_E010_xgb_tuned.csv` and recording its public
-LB score (user action, not run automatically per the project's
-anti-contamination submission policy).
+**Final status:** complete. `deliverables/submission_E010_xgb_tuned.csv`
+submitted to Kaggle (user action); public LB score **0.96653**, recorded
+in `experiments/experiments.csv`'s E010 row — an improvement over E006's
+0.96608 and the new best public LB score. Merged to `main` via PR #22.
 
 ## Build 7 - Ensembling and Blending
 
