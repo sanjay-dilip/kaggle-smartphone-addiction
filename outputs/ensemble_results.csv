@@ -1,0 +1,5 @@
+trial_id,method,component_models,weights,oof_auc,delta_vs_e010,pearson_vs_e010,decision
+eq-E010-E008,equal_weight_blend,E010+E008,0.5/0.5,0.96414,-0.00085,0.9849,Worse
+eq-E010-E003,equal_weight_blend,E010+E003,0.5/0.5,0.96417,-0.00082,0.9849,Worse
+eq-E010-E006,equal_weight_blend,E010+E006,0.5/0.5,0.96495,-4e-05,0.9967,Flat
+eq-E008-E003,equal_weight_blend,E008+E003,0.5/0.5,0.96187,-0.00312,,Worse

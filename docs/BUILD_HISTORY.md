@@ -619,6 +619,31 @@ via `src.ensembling.pairwise_diversity`):
   disagreement with E010. CatBoost and LightGBM are not redundant with
   each other despite comparable individual CV scores.
 
+**Equal-weight (50/50) probability blends** (`outputs/ensemble_results.csv`;
+classification: Clear >=+0.0005, Marginal >+0.0001, Flat within +/-0.0001,
+Worse <-0.0001 — the Clear threshold matches Build 6's own established
+meaningful-gain bar, E010's +0.00055 over E006):
+
+| Pair | OOF AUC | Delta vs E010 (0.96499) | Decision |
+|---|---|---|---|
+| E010 + E008 (50/50) | 0.96414 | -0.00085 | Worse |
+| E010 + E003 (50/50) | 0.96417 | -0.00082 | Worse |
+| E010 + E006 (50/50) | 0.96495 | -0.00004 | Flat |
+| E008 + E003 (50/50) | 0.96187 | -0.00312 | Worse |
+
+Every 50/50 blend involving E010 is worse than E010 alone — expected and
+mechanical, not evidence against the diversity found above: averaging a
+0.96499 model equally with a ~0.961 model necessarily pulls the mean
+down regardless of how genuinely diverse the weaker component's errors
+are. E010+E006 is flat, confirming Phase 3's redundancy finding at the
+blend level too. Per the brief's own weighted-grid framing ("the better
+individual model should generally receive more weight"), the real test
+of whether E008/E003's diversity is exploitable is a weight grid that
+favors E010 heavily, not the 50/50 point — so all four pairs proceed to
+the Phase 5 weighted grid (cheap to run, and E010+E006/E008+E003 close
+out the brief's explicit "does the pre-tuned XGBoost add anything" and
+"CatBoost+LightGBM" questions with real numbers rather than assumption).
+
 ## Build 8 - CV vs Leaderboard Reconciliation
 
 Not started.
