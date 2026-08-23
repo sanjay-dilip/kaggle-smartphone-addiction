@@ -746,7 +746,105 @@ new features, no base-model hyperparameters changed.
 
 ## Build 8 - CV vs Leaderboard Reconciliation
 
-Not started.
+**Objective:** how trustworthy has local cross-validation been relative
+to Kaggle's public leaderboard, and what does that imply about
+overfitting risk and confidence in E010 entering Build 9's final
+submission decision? Analytical only -- no new features, tuning,
+ensembling, or Kaggle submissions.
+
+**Experiments reconciled:** the 5 actually-submitted experiments (E001,
+E002, E004, E006, E010) -- E003/E005/E007/E008/E009 were validated
+locally only (no `public_lb` recorded in `experiments/experiments.csv`)
+and excluded from CV-to-LB analysis, per the build's own rule.
+`outputs/cv_lb_reconciliation.csv` is the canonical table.
+
+**Rank consistency:** perfect. Spearman rho = Kendall tau = 1.0 across
+all 5 submissions -- CV and public LB agree on the exact same ranking
+with zero inversions anywhere in the project's history. With only 5
+points this is a small sample, but the descriptive fact (no rank
+inversions ever occurred) is the meaningful result, not the precision of
+the coefficient.
+
+**CV-LB gap behavior:** consistently positive (public LB always above
+CV) with mean 0.00159, median 0.00157, range [0.00111, 0.00209], std
+0.00035. The four boosting-model gaps (0.00111-0.00163) sit in a
+noticeably tighter band than the outlier (E001, Logistic Regression,
+0.00209) -- and the gap does *not* widen with model strength; E010's gap
+(0.00154) is smaller than E006's (0.00163) despite being the more-tuned
+model. Read as a systematic measurement offset (the public LB scores a
+fixed, different subset of the true test set than any local CV fold),
+not as evidence the leaderboard is "easier" or that later models are
+becoming leaderboard-specific.
+
+**Incremental-transfer findings** (`outputs/model_progression.csv`,
+chronological submission order E001->E002->E004->E006->E010): every
+transition's CV-delta and LB-delta direction matched, all 4 times, with
+transfer ratios (delta_lb/delta_cv) of 0.98, 1.14, 1.10, and 0.83 -- all
+within roughly +/-20% of 1.0. The final, smallest transition (E006->E010,
+delta_cv +0.00054) had a transfer ratio of 0.83 (LB improved *less* than
+CV predicted) -- mild conservatism, the opposite direction from the
+overfitting-warning pattern (LB improving *more* than CV would).
+
+**E010 vs E006 (Phase 7):** 5/5 folds improved (tight delta range
++0.00042 to +0.00062, no anomalous single fold), CV std improved
+(0.00056 -> 0.00051, E010 more stable, not less), and public LB confirmed
+the direction (+0.00045). Fold stability across the full winning lineage
+(E001->E004->E006->E010) trends *down* in both `cv_std` (0.00081 ->
+0.00056 -> 0.00056 -> 0.00051) and fold range (0.00227 -> 0.00166 ->
+0.00169 -> 0.00156) -- stronger models did not become less stable.
+
+**Public-LB selection-bias audit:** 5 total submissions, all traced to a
+CV comparison finalized *before* the corresponding submission (per-
+experiment audit in the notebook Section 8). No parameter was ever
+changed in response to an LB score; no rejected CV model was ever
+resurrected because of LB; Build 7's ensembling investigation made zero
+submissions by explicit design specifically to avoid LB-driven weight
+tuning. **Public leaderboard selection-bias risk: Low.**
+
+**Private-LB risk assessment:** lower-risk factors -- perfect CV/LB rank
+agreement, improving (not degrading) fold stability, no LB-driven
+tuning anywhere in the project's history, no transductive/lookup/
+pseudo-labeling tricks (Build 5's forensic generator audit tested for
+and rejected such structure), no ensemble weight tuning against LB
+(Build 7). Higher-risk factors -- the final tuning gain is small in
+absolute terms (+0.00054 CV), the entire winning lineage (E004, E006,
+E010) is a single model family (XGBoost) with zero cross-family
+diversification by construction (Build 7 found no ensemble beats E010),
+and Build 5 found real (if unexploited) generator structure whose
+public/private-split behavior is not fully characterized. **Private
+leaderboard robustness risk: Moderate** -- process hygiene argues
+against "High," but model-family concentration and gain size mean "Low"
+would overstate confidence. This is a risk characterization, not a
+private-score prediction.
+
+**Hedge candidate assessment (Phase 12):** E008 (CatBoost +
+`screen_residual`) is the only structurally plausible hedge -- genuinely
+diverse from E010 (Build 7: 0.985 Pearson, 28% top-decile disagreement)
+and individually reasonable (CV 0.96104) -- but it was never submitted,
+so it carries zero public LB evidence, unlike every other candidate
+considered here. Flagged for Build 9's consideration rather than
+confirmed or rejected outright: Build 9 should decide whether obtaining
+that confirmation is worth a submission given remaining budget. E006 is
+explicitly *not* a hedge candidate -- too redundant with E010 (Build 7:
+0.9967 Pearson) to offer any diversification benefit despite having LB
+evidence.
+
+**Build 9 candidate pool:**
+- **Primary:** E010.
+- **Hedge (flagged, unconfirmed):** E008.
+- **Historical reference:** E001, E002, E004, E006.
+- **Rejected:** E003, E005, E007, E009 (never submitted, already
+  rejected on CV evidence in their own builds).
+
+**No new Kaggle submissions this build**, per scope. No new experiment
+ID assigned -- Build 8 performed no new predictive-configuration
+training or evaluation.
+
+**Final status:** complete. `notebooks/08_cv_leaderboard_reconciliation.ipynb`
+run top-to-bottom via papermill, zero cell errors. `pytest tests/ -v`:
+71/71 passing (no new reusable code introduced -- all calculations are
+notebook-local pandas/scipy over existing artifacts, per the build's own
+allowance to skip new tests in that case).
 
 ## Build 9 - Final Submission Strategy
 

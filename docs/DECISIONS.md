@@ -331,3 +331,55 @@ examines CV/LB reconciliation directly.
 Evidence trace: `outputs/ensemble_prediction_correlations.csv`,
 `outputs/ensemble_results.csv`, `outputs/oof_predictions/`,
 `outputs/test_predictions/`.
+
+## Build 8 — CV vs Leaderboard Reconciliation
+
+**E010 retained as the primary Build 9 candidate** because CV and
+public LB both confirm its improvement over E006: 5/5 folds improved
+(tight range +0.00042 to +0.00062), CV std improved (0.00056 -> 0.00051),
+and public LB moved in the same direction (+0.00045, transfer ratio
+0.83). Across the full submission history (E001, E002, E004, E006,
+E010), CV and public LB rank experiments identically (Spearman = Kendall
+= 1.0) and every CV improvement was confirmed by an LB improvement in
+the same direction — no rank inversions, no divergent-direction
+transitions, anywhere.
+
+**Public LB selection-bias risk assessed as Low** because every
+submitted experiment's model/parameter/feature choice traces to a CV
+comparison finalized *before* its corresponding Kaggle submission
+(audited per-experiment in `notebooks/08_cv_leaderboard_reconciliation.ipynb`
+Section 8): no parameter was ever changed in response to an LB score, no
+CV-rejected model was ever resurrected because of LB, and Build 7's
+ensembling investigation made zero submissions specifically to avoid
+LB-driven weight tuning.
+
+**Private LB robustness risk assessed as Moderate, not Low**, despite
+the low selection-bias finding, because two structural risk factors
+remain regardless of process hygiene: the final tuning gain (E006 ->
+E010) is small in absolute terms (+0.00054 CV), and the entire winning
+lineage (E004, E006, E010) is a single model family (XGBoost) with zero
+cross-family diversification — not from oversight, but because Build 7
+found no ensemble combining CatBoost/LightGBM beats E010. This is a risk
+characterization, not a private-score prediction.
+
+**E008 (CatBoost) flagged as a possible Build 9 hedge candidate, not
+confirmed.** It is the only historical model with genuine prediction
+diversity from E010 (Build 7: 0.985 Pearson, 28% top-decile
+disagreement) and reasonable individual CV (0.96104), which is exactly
+what a private-LB diversification hedge would want. However it was
+never submitted to Kaggle and so carries zero public LB evidence, unlike
+every other candidate in this reconciliation — Build 9 should decide
+whether that gap is worth closing with a submission, not Build 8, which
+is barred from submitting without explicit approval.
+
+**E006 rejected as a hedge candidate** despite having public LB
+evidence, because Build 7 already established it is too redundant with
+E010 (0.9967 Pearson, lowest disagreement of every pair measured) to
+offer any private-LB diversification benefit.
+
+**No new Kaggle submissions were made this build.** All required
+evidence already existed in committed artifacts; Build 8's philosophy is
+reconciliation, not new experimentation.
+
+Evidence trace: `outputs/cv_lb_reconciliation.csv`,
+`outputs/model_progression.csv`, `outputs/figures/cv_vs_public_lb.png`.
