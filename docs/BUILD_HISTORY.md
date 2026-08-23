@@ -644,6 +644,89 @@ the Phase 5 weighted grid (cheap to run, and E010+E006/E008+E003 close
 out the brief's explicit "does the pre-tuned XGBoost add anything" and
 "CatBoost+LightGBM" questions with real numbers rather than assumption).
 
+**Weighted probability blends** (coarse grid, `outputs/ensemble_results.csv`):
+E010 weight in {0.5, 0.6, 0.7, 0.8, 0.9, 0.95} for the three pairs
+including E010; E008 weight in {0.3, 0.4, 0.5, 0.6, 0.7} for E008+E003.
+
+| Pair | Best point | OOF AUC | Delta vs E010 | Pattern |
+|---|---|---|---|---|
+| E010 + E008 | E010=0.90 | 0.96498 | -0.00001 | Monotonic Worse->Flat as E010 weight rises; never exceeds E010 |
+| E010 + E003 | E010=0.90-0.95 | 0.96498-0.96500 | -0.00001/+0.00001 | Same pattern, same ceiling |
+| E010 + E006 | E010=0.80 | 0.96503 | +0.00004 | Flat plateau around E010=0.6-0.9, tiny positive noise |
+| E008 + E003 | E008=0.50 | 0.96187 | -0.00312 | Never approaches E010 at any weight |
+
+No weight, for any pair, reaches the +0.0005 Clear bar. E010+E008 and
+E010+E003 both trace the same shape: as E010's weight rises the blend
+converges toward E010's own score from below, plateauing at essentially
+E010 (0.96498-0.96500) rather than exceeding it -- the genuine diversity
+found in Phase 3 does not translate into a net OOF gain once weighted
+correctly. E010+E006's small positive plateau (+0.00002 to +0.00004
+across weights 0.6-0.9) is well inside the ~0.0005 single-fold noise
+band established in Build 6, not a real signal. This is a broad, stable
+*null* result (matching the brief's own trustworthiness bar -- a wide
+flat region, not an isolated spike), which is itself informative: the
+weight search did not overfit to noise, it consistently found nothing.
+
+**Rank averaging:** tested at E010 weight {0.5, 0.8, 0.9} for all three
+E010 pairs. Results are essentially identical to probability blending at
+every point (e.g. E010=0.8/E006=0.2: rank AUC 0.96503 vs probability AUC
+0.96503) -- rank averaging offers no advantage over probability blending
+for this candidate set. Not adopted.
+
+**Three-model blend (Phase 6): explicitly skipped.** The brief's own
+gate requires both E010+E008 and E010+E003 to show real two-model gains
+before attempting a trio -- neither did (both plateau at Flat, never
+exceeding E010). Adding a third component on top of two null results
+would not manufacture a gain neither pairwise combination could find.
+
+**Fold-level stability** (best surviving candidate -- E010+E006 at
+0.80/0.20 probability weights, the single least-negative point found
+across every blend tested):
+
+| Fold | E010 | E010+E006 (0.8/0.2) | Delta |
+|---|---|---|---|
+| 1 | 0.96429 | 0.96433 | +0.00004 |
+| 2 | 0.96500 | 0.96503 | +0.00002 |
+| 3 | 0.96509 | 0.96513 | +0.00004 |
+| 4 | 0.96585 | 0.96591 | +0.00006 |
+| 5 | 0.96475 | 0.96477 | +0.00002 |
+
+5/5 folds improved, but every improvement is a fraction of the noise
+band (+0.00002 to +0.00006) and CV std is unchanged (0.000508 ->
+0.000518). Consistent direction across all 5 folds rules out the gain
+being a single-fold fluke, but consistency of a microscopic effect is
+still a microscopic effect -- this is exactly the pattern expected from
+averaging two highly correlated models from the same architecture family
+(mild variance reduction, no real information gain), not evidence of a
+usable ensemble.
+
+**Stacking decision gate (Phase 9): rejected.** The weighted grid already
+performed an exhaustive linear search over every pairwise combination of
+these four candidates and found no region above E010 for any pair. A
+`LogisticRegression` meta-model over the same probability inputs is
+itself a linear combination -- it cannot discover a solution the coarse
+grid's dense coverage of that same linear space did not already surface.
+Implementing a nested-CV stacker here would add real complexity
+(leakage-safe validation machinery) to re-confirm a null result already
+established more simply and more transparently. Per the brief's own
+allowance, "Stacking rejected as unnecessary" is a fully valid Build 7
+outcome.
+
+**Build 7 core finding: no ensemble beats E010.** Across equal-weight,
+weighted, and rank-averaged blending of every candidate pair (and the
+explicitly-skipped three-model trio), the frozen E010 configuration
+remains the best available model. E008 and E003 are genuinely diverse
+from E010 (Phase 3) but too far below its individual strength (~0.004
+AUC) for that diversity to net a gain once weighted correctly; E006 is
+too redundant with E010 to contribute anything beyond noise-level
+variance reduction. This extends the brief's own explicitly-anticipated
+outcome ("A perfectly acceptable Build 7 decision is: Stacking rejected
+as unnecessary") one level further: no blend of any kind earns inclusion
+under the Core Build 7 Rule's bar (strong individual performance +
+sufficiently different errors + measurable CV improvement when combined
++ reasonable leaderboard behavior) -- the third criterion was never met
+by any candidate.
+
 ## Build 8 - CV vs Leaderboard Reconciliation
 
 Not started.
