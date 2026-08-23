@@ -21,6 +21,11 @@ OOF_DIR: Path = OUTPUTS_DIR / "oof_predictions"
 TEST_PRED_DIR: Path = OUTPUTS_DIR / "test_predictions"
 FOLD_ASSIGNMENTS_PATH: Path = OUTPUTS_DIR / "cv_fold_assignments.csv"
 
+# 8 decimal places is far finer than any AUC comparison in this project
+# needs; rounding on write keeps ~691k-row prediction artifacts from
+# storing 16+ significant digits of default float64 repr for no benefit.
+PREDICTION_DECIMALS: int = 8
+
 
 def validate_prediction_artifact(
     df: pd.DataFrame, expected_ids: pd.Series, proba_col: str
@@ -54,10 +59,12 @@ def validate_prediction_artifact(
 def save_oof(experiment_id: str, ids: pd.Series, oof_proba: np.ndarray) -> Path:
     """Persists one experiment's OOF predictions to outputs/oof_predictions/{id}.csv."""
     OOF_DIR.mkdir(parents=True, exist_ok=True)
-    frame = pd.DataFrame({ID_COLUMN: ids.to_numpy(), "oof_proba": oof_proba})
+    frame = pd.DataFrame(
+        {ID_COLUMN: ids.to_numpy(), "oof_proba": np.round(oof_proba, PREDICTION_DECIMALS)}
+    )
     validate_prediction_artifact(frame, ids, "oof_proba")
     path = OOF_DIR / f"{experiment_id}.csv"
-    frame.to_csv(path, index=False)
+    frame.to_csv(path, index=False, float_format=f"%.{PREDICTION_DECIMALS}f")
     return path
 
 
@@ -72,10 +79,12 @@ def load_oof(experiment_id: str, expected_ids: pd.Series) -> pd.Series:
 def save_test_pred(experiment_id: str, ids: pd.Series, test_proba: np.ndarray) -> Path:
     """Persists one experiment's test predictions to outputs/test_predictions/{id}.csv."""
     TEST_PRED_DIR.mkdir(parents=True, exist_ok=True)
-    frame = pd.DataFrame({ID_COLUMN: ids.to_numpy(), "test_proba": test_proba})
+    frame = pd.DataFrame(
+        {ID_COLUMN: ids.to_numpy(), "test_proba": np.round(test_proba, PREDICTION_DECIMALS)}
+    )
     validate_prediction_artifact(frame, ids, "test_proba")
     path = TEST_PRED_DIR / f"{experiment_id}.csv"
-    frame.to_csv(path, index=False)
+    frame.to_csv(path, index=False, float_format=f"%.{PREDICTION_DECIMALS}f")
     return path
 
 
