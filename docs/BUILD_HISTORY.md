@@ -848,7 +848,86 @@ allowance to skip new tests in that case).
 
 ## Build 9 - Final Submission Strategy
 
-Not started.
+**Objective:** make the final competition submission decision using the
+validated evidence accumulated across Builds 1-8, actual Kaggle
+constraints, model diversity, public-LB behavior, and private-LB risk.
+Decision and competition-close preparation only -- no new feature
+engineering, hyperparameter tuning, model-family benchmarking, blending,
+stacking, or exploratory modeling unless a genuine integrity problem was
+discovered (none was).
+
+**Live Kaggle constraints verified** (`kaggle.com/competitions/playground-series-s6e8`,
+checked 2026-08-24): competition open, 7 days to go; Final Submission
+Deadline August 31, 2026, 11:59 PM UTC; daily submission limit 10; up to
+2 Final Submissions selectable for judging; prize structure is Kaggle
+merchandise only (no points/medals).
+
+**E010 integrity audit:** the committed deliverable
+(`deliverables/submission_E010_xgb_tuned.csv`) matches the persisted,
+`cv_mean`-verified `outputs/test_predictions/E010.csv` artifact to
+within 5e-9 (floating-point rounding only). No reproducibility or
+integrity defect found. **E010 retained as primary**, unchanged from
+Build 8 -- its CV/LB standing was already established in Builds 6 and 8
+and is not reopened here.
+
+**E008 hedge question resolved: retained as the second final
+submission.** Evaluated against the Build 9 hedge-decision framework
+(strength, stability, diversity, model-family independence, feature
+dependence, existing LB evidence) -- see `docs/DECISIONS.md`'s Build 9
+entry for the full rationale. Summary: CV 0.96104 (~0.004 below E010,
+the same magnitude gap `screen_residual` closed on CatBoost in Build 4),
+CV std 0.00055 (same tight band as every other boosting experiment), and
+the only historical candidate with genuine prediction diversity from
+E010 (Build 7: 0.985 Pearson, 28.1% top-decile disagreement vs E006's
+0.997/10.4%) plus real model-family independence (CatBoost vs E010's
+XGBoost) -- directly addressing the single-model-family risk factor
+Build 8 flagged. E006 was not reconsidered, per Build 7's redundancy
+finding.
+
+**E008 submitted exactly as already validated, decided before observing
+its public LB.** `deliverables/submission_E008_catboost_screen_residual.csv`
+was generated in `notebooks/09_final_submission_strategy.ipynb` by
+loading the existing, `cv_mean`-verified `outputs/test_predictions/E008.csv`
+artifact (Build 7 regeneration) via `src.ensembling.load_test_pred`,
+aligning to `data/sample_submission.csv`'s id order, and validating with
+`src.submission_validation.validate_submission` -- no retraining, no
+parameter/feature/seed/fold-setup change. Schema validation passed
+(296,302 rows, unique ids exactly matching the sample submission,
+predictions in [0.000197, 0.999999], no missing/non-finite values). No
+new experiment ID was assigned -- E008 already exists in
+`experiments/experiments.csv`; this build only closes its missing
+public-LB evidence gap. **Public LB: pending manual Kaggle upload and
+score entry**, recorded in `docs/DECISIONS.md` as a decision made prior
+to observing the result.
+
+**Final candidate set:** primary E010 (CV 0.96499, public LB 0.96653),
+second/hedge E008 (CV 0.96104, public LB pending). Documented with full
+risk-matrix rationale in `outputs/final_submission_candidates.csv` and
+`notebooks/09_final_submission_strategy.ipynb` (Sections 7-8). No new
+modeling of any kind was performed -- no features, tuning, blending, or
+stacking.
+
+**`docs/COMPETITION_CLOSE_CHECKLIST.md` created** -- the human action
+list for final selection before the 2026-08-31 23:59 UTC deadline
+(upload both files if not already uploaded, record E008's public LB,
+mark exactly E010 and E008 as the two Final Submissions, verify the
+marked scores match) and for after competition close (record private
+LB, final rank, percentile).
+
+**Final rank, private LB, percentile, and medal/status are explicitly
+marked pending** in `docs/COMPETITION_CLOSE_CHECKLIST.md` and
+`README.md` -- not estimated, per the build's own rule against premature
+final-result claims.
+
+**Final status:** complete. `notebooks/09_final_submission_strategy.ipynb`
+run top-to-bottom via papermill, zero cell errors across all 11 code
+cells. `pytest tests/ -v`: 71/71 passing (no new reusable `src/` code
+introduced -- the submission-generation logic reuses `src.ensembling`
+and `src.submission_validation` exactly as Build 7 built them, so no new
+tests were required). Merged to `main` via PR (see PR link in this
+build's final handoff). Next step: user manually uploads/selects final
+submissions on Kaggle per the close checklist, then waits for E008's
+public LB and, eventually, competition close, before Build C begins.
 
 ## Build C - Consolidation, Reproduction, Documentation, Publication
 
