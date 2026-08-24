@@ -70,7 +70,7 @@ paper trail of what was tried and rejected, not just what worked.
 5. Synthetic-generator investigation - forensic audit of what's real
    generator structure versus ordinary signal versus noise
 6. Hyperparameter tuning, ensembling, and final submission strategy -
-   not started yet (see Future improvements)
+   complete (see Build 9 above); competition result pending close
 
 ## Data source
 
@@ -152,6 +152,16 @@ run anyway. E010 remains the best model - a negative result, evidenced
 end to end (`outputs/ensemble_prediction_correlations.csv`,
 `outputs/ensemble_results.csv`) rather than assumed.
 
+**Final submission strategy (Build 9):** verified live Kaggle constraints
+(deadline August 31, 2026 11:59 PM UTC, up to 2 final submissions),
+confirmed E010 as the primary final submission, and selected E008
+(CatBoost + `screen_residual`) as a second final submission - a
+deliberate model-family diversity hedge (Build 7: 0.985 Pearson vs E010,
+28% top-decile disagreement) against the single-model-family risk Build
+8 flagged, not a leaderboard-driven choice. Best Public LB remains
+**0.96653** (E010); E008's public LB is pending. Competition final
+result (private LB, rank, percentile): **pending competition close.**
+
 **CV vs leaderboard reconciliation (Build 8):** checked whether local
 cross-validation has actually been trustworthy across every submitted
 experiment (E001, E002, E004, E006, E010), rather than assuming it. CV
@@ -220,14 +230,9 @@ outputs/        generated tables and artifacts
 
 ## Future improvements
 
-- Controlled hyperparameter tuning for XGBoost and CatBoost - CatBoost in
-  particular hasn't converged within its current iteration budget
-  (`best_iteration=799` every fold, capped, not stopped early)
-- Ensembling and blending across model families once tuning is done
-- Reconciling CV and public leaderboard scores more formally, since the
-  leaderboard only reflects a subset of the test set
-- A deliberate final submission strategy, rather than submitting whatever
-  the latest experiment happens to be
+- Once the competition closes: record the private leaderboard result,
+  final rank, and percentile, and consolidate the project (Build C -
+  not started)
 - The README's data-source and setup sections could use a cold-clone test
   (fresh venv, fresh clone, verbatim commands) before the project is
   called complete
