@@ -5,9 +5,9 @@ intentionally excluded via `.gitignore` (`data/*.csv`).
 
 ## Source
 
-Kaggle Playground Series - Season 6, Episode 8: Predicting Smartphone
-Addiction. You must accept the competition rules on Kaggle yourself before
-downloading any data — this repository does not reproduce or distribute it.
+The original competition's data, obtained under its own terms — see the
+top-level `README.md` for competition context. This repository does not
+reproduce or distribute it.
 
 ## Expected files
 
@@ -20,7 +20,6 @@ directly in this `data/` directory:
 
 ## Setup after a fresh clone
 
-1. Accept the competition rules at the Kaggle competition page.
-2. Download the competition data (e.g. via the Kaggle CLI or the website).
-3. Extract the three CSV files listed above into `data/`.
-4. Run the smoke checks in `tests/` to confirm the files are usable.
+1. Obtain the competition data from its original source.
+2. Extract the three CSV files listed above into `data/`.
+3. Run the smoke checks in `tests/` to confirm the files are usable.

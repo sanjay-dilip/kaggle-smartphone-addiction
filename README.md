@@ -1,8 +1,7 @@
-# Kaggle Playground Series S6E8 - Predicting Smartphone Addiction
+# Predicting Smartphone Addiction
 
 A gradient-boosting pipeline that predicts smartphone addiction risk from
-self-reported usage data, built for Kaggle Playground Series Season 6,
-Episode 8.
+self-reported usage data, built for a Kaggle competition.
 
 ---
 
@@ -11,7 +10,7 @@ Episode 8.
 The task is binary classification: given a person's daily screen time,
 app usage, sleep, and a few categorical lifestyle fields, predict the
 probability that they're flagged as addicted (`addicted_label`), scored
-by ROC AUC. The dataset is synthetic (Kaggle-generated, not scraped real
+by ROC AUC. The dataset is synthetic (generated, not scraped from real
 users), which changes what "understanding the data" means: instead of
 asking what's true about smartphone use in general, the project spends
 real effort asking what's true about *this generator specifically* -
@@ -74,11 +73,10 @@ paper trail of what was tried and rejected, not just what worked.
 
 ## Data source
 
-Competition data from Kaggle Playground Series S6E8 - 691,369 training
-rows, 296,302 test rows, all fields synthetically generated. It's not
-included in this repository: `data/*.csv` is gitignored per the
-competition's terms, and `data/README.md` explains how to pull it down
-yourself after accepting the competition rules on Kaggle.
+Competition data - 691,369 training rows, 296,302 test rows, all fields
+synthetically generated. It's not included in this repository:
+`data/*.csv` is gitignored per the competition's terms, and
+`data/README.md` explains how to pull it down yourself.
 
 Every predictor column has some missingness (4-19% depending on the
 column), and the target is moderately imbalanced (71% positive). Both are
@@ -152,9 +150,10 @@ run anyway. E010 remains the best model - a negative result, evidenced
 end to end (`outputs/ensemble_prediction_correlations.csv`,
 `outputs/ensemble_results.csv`) rather than assumed.
 
-**Final submission strategy (Build 9):** verified live Kaggle constraints
-(deadline August 31, 2026 11:59 PM UTC, up to 2 final submissions),
-confirmed E010 as the primary final submission, and selected E008
+**Final submission strategy (Build 9):** verified the live competition's
+final-submission constraints (up to 2 final submissions selectable
+before its posted close date), confirmed E010 as the primary final
+submission, and selected E008
 (CatBoost + `screen_residual`) as a second final submission - a
 deliberate model-family diversity hedge (Build 7: 0.985 Pearson vs E010,
 28% top-decile disagreement) against the single-model-family risk Build
@@ -207,7 +206,7 @@ tests/          smoke checks and unit tests
 data/           competition CSVs (gitignored; see data/README.md)
 experiments/    experiment tracker (experiments.csv) and per-run artifacts
 deliverables/   submission-ready CSVs (see deliverables/CONTENTS.md)
-docs/           decision log, build history, competition notes
+docs/           decision log, build history
 outputs/        generated tables and artifacts
 ```
 
