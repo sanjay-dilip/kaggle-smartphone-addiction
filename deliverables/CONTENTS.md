@@ -19,7 +19,7 @@ that produced it, referenced below.
 | `E004_submission.csv` | E004 (XGBoost, raw features) | `notebooks/03_model_benchmarks.ipynb` | 0.96382 (std 0.00056) | 0.96539 |
 | `E006_xgb_screen_residual_submission.csv` | E006 (XGBoost + `screen_residual`) | `notebooks/04_feature_engineering.ipynb` | 0.96445 (std 0.00056) | 0.96608 |
 | `submission_E010_xgb_tuned.csv` | E010 (XGBoost tuned + `screen_residual`) | `notebooks/06_xgboost_tuning.ipynb` | 0.96499 (std 0.00051) | 0.96653 |
-| `submission_E008_catboost_screen_residual.csv` | E008 (CatBoost + `screen_residual`) | `notebooks/09_final_submission_strategy.ipynb` (from the frozen `outputs/test_predictions/E008.csv` artifact) | 0.96104 (std 0.00055) | pending |
+| `submission_E008_catboost_screen_residual.csv` | E008 (CatBoost + `screen_residual`) | `notebooks/09_final_submission_strategy.ipynb` (from the frozen `outputs/test_predictions/E008.csv` artifact) | 0.96104 (std 0.00055) | 0.96220 |
 
 `E001_submission.csv` was produced by refitting the E001 pipeline
 (`src/preprocessing.py` + `LogisticRegression(max_iter=1000,
