@@ -93,6 +93,11 @@ handled explicitly in the preprocessing rather than assumed away.
 | E004 | XGBoost | raw predictors | 0.96382 (std 0.00056) | 0.96539 |
 | E006 | XGBoost | raw + `screen_residual` | 0.96445 (std 0.00056) | 0.96608 |
 | **E010** | **XGBoost (tuned)** | **raw + `screen_residual`** | **0.96499 (std 0.00051)** | **0.96653** |
+| E008 | CatBoost | raw + `screen_residual` | 0.96104 (std 0.00055) | 0.96220 |
+
+E010 and E008 are the two final submissions selected for judging (Build
+9) -- E010 as the primary model, E008 as a model-family diversity hedge.
+Private leaderboard results are pending competition close.
 
 E010 is the current best model: same feature set and architecture as
 E006, with `learning_rate` lowered to 0.05 and `n_estimators` raised to
@@ -158,8 +163,10 @@ submission, and selected E008
 deliberate model-family diversity hedge (Build 7: 0.985 Pearson vs E010,
 28% top-decile disagreement) against the single-model-family risk Build
 8 flagged, not a leaderboard-driven choice. Best Public LB remains
-**0.96653** (E010); E008's public LB is pending. Competition final
-result (private LB, rank, percentile): **pending competition close.**
+**0.96653** (E010); E008 scored **0.96220** on the public leaderboard
+(LB-CV gap consistent with every other submission). Both were selected
+as the two final submissions for judging. Competition final result
+(private LB, rank, percentile): **pending competition close.**
 
 **CV vs leaderboard reconciliation (Build 8):** checked whether local
 cross-validation has actually been trustworthy across every submitted
