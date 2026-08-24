@@ -1,7 +1,7 @@
 # Deliverables
 
 Submission-ready CSVs generated from validated experiments, for direct
-handoff (e.g. manual Kaggle upload).
+handoff (e.g. manual competition upload).
 
 ## Convention
 
