@@ -3,7 +3,7 @@
 Records why, not what happened chronologically. See `BUILD_HISTORY.md` for
 the chronological record.
 
-## This is a Kaggle competition project, not a deployment project
+## This is a competition project, not a deployment project
 
 No Streamlit, FastAPI, Docker, cloud deployment, or orchestration
 infrastructure. The deliverable is a reproducible modeling pipeline and
@@ -21,7 +21,7 @@ into `src/` before a second real usage exists is avoided.
 
 ## Raw competition data is not committed
 
-`data/*.csv` is gitignored. Kaggle competition data is licensed for
+`data/*.csv` is gitignored. The competition data is licensed for
 competition use, not redistribution, and the files are large. `data/README.md`
 documents how to obtain them.
 
@@ -94,7 +94,7 @@ using the same harness.
 
 ## `deliverables/` holds submission-ready files
 
-Build 0 originally created a `submissions/` directory for Kaggle
+Build 0 originally created a `submissions/` directory for
 submission tracking, but it was never populated with an actual
 submission. When a submission-ready CSV was first requested
 (`E001_submission.csv`), it was generated as a standalone handoff artifact
@@ -346,7 +346,7 @@ transitions, anywhere.
 
 **Public LB selection-bias risk assessed as Low** because every
 submitted experiment's model/parameter/feature choice traces to a CV
-comparison finalized *before* its corresponding Kaggle submission
+comparison finalized *before* its corresponding submission
 (audited per-experiment in `notebooks/08_cv_leaderboard_reconciliation.ipynb`
 Section 8): no parameter was ever changed in response to an LB score, no
 CV-rejected model was ever resurrected because of LB, and Build 7's
@@ -367,7 +367,7 @@ confirmed.** It is the only historical model with genuine prediction
 diversity from E010 (Build 7: 0.985 Pearson, 28% top-decile
 disagreement) and reasonable individual CV (0.96104), which is exactly
 what a private-LB diversification hedge would want. However it was
-never submitted to Kaggle and so carries zero public LB evidence, unlike
+never submitted and so carries zero public LB evidence, unlike
 every other candidate in this reconciliation — Build 9 should decide
 whether that gap is worth closing with a submission, not Build 8, which
 is barred from submitting without explicit approval.
@@ -377,7 +377,7 @@ evidence, because Build 7 already established it is too redundant with
 E010 (0.9967 Pearson, lowest disagreement of every pair measured) to
 offer any private-LB diversification benefit.
 
-**No new Kaggle submissions were made this build.** All required
+**No new submissions were made this build.** All required
 evidence already existed in committed artifacts; Build 8's philosophy is
 reconciliation, not new experimentation.
 
@@ -386,10 +386,9 @@ Evidence trace: `outputs/cv_lb_reconciliation.csv`,
 
 ## Build 9 -- Final Submission Strategy
 
-**Live Kaggle competition constraints verified** (`kaggle.com/competitions/playground-series-s6e8`,
-checked 2026-08-24): competition open, 7 days to go; Final Submission
-Deadline August 31, 2026, 11:59 PM UTC; daily submission limit 10; up to
-2 Final Submissions may be selected for judging.
+**Live competition constraints verified** at the start of this build:
+the competition remained open with two final submissions selectable for
+judging, ahead of its posted close date.
 
 **E010 confirmed as the primary final submission**, unchanged from
 Build 8. Integrity audit this build: the committed deliverable
@@ -446,7 +445,7 @@ CV mean 0.96104 reconfirmed exactly before being trusted) via
 `data/sample_submission.csv`'s id order, and validating with
 `src.submission_validation.validate_submission` -- no retraining
 performed. This decision (submit E008, unchanged) was made and recorded
-in this file *before* Kaggle returned E008's public LB score, per the
+in this file *before* E008's public LB score was returned, per the
 build's own no-leaderboard-chasing rule.
 
 **No new modeling permitted after this build's final candidate decision.**
@@ -456,5 +455,4 @@ ensembling is explicitly out of scope until the competition closes and
 Build C's consolidation begins.
 
 Evidence trace: `outputs/final_submission_candidates.csv`,
-`outputs/ensemble_prediction_correlations.csv` (Build 7),
-`docs/COMPETITION_CLOSE_CHECKLIST.md`.
+`outputs/ensemble_prediction_correlations.csv` (Build 7).
