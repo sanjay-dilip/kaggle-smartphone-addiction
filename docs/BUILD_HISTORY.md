@@ -894,12 +894,18 @@ parameter/feature/seed/fold-setup change. Schema validation passed
 predictions in [0.000197, 0.999999], no missing/non-finite values). No
 new experiment ID was assigned -- E008 already exists in
 `experiments/experiments.csv`; this build only closes its missing
-public-LB evidence gap. **Public LB: pending manual upload and
-score entry**, recorded in `docs/DECISIONS.md` as a decision made prior
-to observing the result.
+public-LB evidence gap. **Public LB: 0.96220** (recorded once the user
+reported the score) -- LB-CV gap +0.00116, within the Build 8
+boosting-model gap range [0.00111, 0.00163]. Behavior is consistent with
+every other submitted experiment: no rank inversion, no model-family-
+specific anomaly. This does not change E008's selection -- the decision
+to submit it was made and recorded before this score was known, per the
+build's own no-leaderboard-chasing rule.
 
 **Final candidate set:** primary E010 (CV 0.96499, public LB 0.96653),
-second/hedge E008 (CV 0.96104, public LB pending). Documented with full
+second/hedge E008 (CV 0.96104, public LB 0.96220). Both were manually
+selected by the user as the two final submissions for judging.
+Documented with full
 risk-matrix rationale in `outputs/final_submission_candidates.csv` and
 `notebooks/09_final_submission_strategy.ipynb` (Sections 7-8). No new
 modeling of any kind was performed -- no features, tuning, blending, or

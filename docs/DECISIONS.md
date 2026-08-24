@@ -448,6 +448,14 @@ performed. This decision (submit E008, unchanged) was made and recorded
 in this file *before* E008's public LB score was returned, per the
 build's own no-leaderboard-chasing rule.
 
+**E008's public LB (0.96220), once reported, reconciled cleanly with
+its CV.** LB-CV gap +0.00116, inside the Build 8 boosting-model gap
+range [0.00111, 0.00163] -- no rank inversion, no model-family-specific
+anomaly. This is evidence collection only; it changes nothing about the
+selection decision above, which was already made and recorded before
+this score existed. The user selected both E010 and E008 as the two
+final submissions for judging.
+
 **No new modeling permitted after this build's final candidate decision.**
 Build 9's role is selection under constraints, not development; any
 further XGBoost/CatBoost/LightGBM tuning, feature engineering, or
