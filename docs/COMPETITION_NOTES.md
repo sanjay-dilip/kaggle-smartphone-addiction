@@ -10,13 +10,29 @@ verifiable from local files is marked as such.
 - Title: Predicting Smartphone Addiction
 - Task: binary classification
 - Target column: `addicted_label` (verified in `data/train.csv` header)
-- Evaluation metric: ROC AUC (as provided by the user; not independently
-  verifiable from local files alone)
-- Final deadline: August 31, 2026 (as provided by the user; not
-  independently verifiable from local files alone)
+- Evaluation metric: ROC AUC (verified on the live competition page,
+  `kaggle.com/competitions/playground-series-s6e8`, Evaluation section,
+  checked 2026-08-24)
+- Final Submission Deadline: **August 31, 2026, 11:59 PM UTC** (verified
+  on the live competition Overview > Timeline page, checked 2026-08-24;
+  "All deadlines are at 11:59 PM UTC on the corresponding day unless
+  otherwise noted"). Start Date August 1, 2026; Entry Deadline and Team
+  Merger Deadline both same as the Final Submission Deadline.
+- Daily submission limit: **10 submissions per day** (verified on the
+  live Rules page, Section 2.2.a, checked 2026-08-24).
+- Final-selection rule: **up to 2 Final Submissions may be selected for
+  judging** (Rules Section 2.2.b). Kaggle's standard behavior applies if
+  none are manually selected before the deadline: it auto-selects the
+  best-scoring public-LB submission(s) on the participant's behalf --
+  this repository does not rely on that fallback and expects the user to
+  manually select before close.
 - Predictions must be probabilities, not hard class labels (consistent with
   ROC AUC as the evaluation metric and with the placeholder values already
   present in `data/sample_submission.csv`)
+- Prize structure: Kaggle merchandise only, no points or medals awarded
+  (verified on the live competition page, checked 2026-08-24) -- private
+  leaderboard placement affects standings/portfolio value only, not a
+  points/medal outcome.
 
 ## Local files present
 
