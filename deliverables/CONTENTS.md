@@ -19,6 +19,7 @@ that produced it, referenced below.
 | `E004_submission.csv` | E004 (XGBoost, raw features) | `notebooks/03_model_benchmarks.ipynb` | 0.96382 (std 0.00056) | 0.96539 |
 | `E006_xgb_screen_residual_submission.csv` | E006 (XGBoost + `screen_residual`) | `notebooks/04_feature_engineering.ipynb` | 0.96445 (std 0.00056) | 0.96608 |
 | `submission_E010_xgb_tuned.csv` | E010 (XGBoost tuned + `screen_residual`) | `notebooks/06_xgboost_tuning.ipynb` | 0.96499 (std 0.00051) | 0.96653 |
+| `submission_E008_catboost_screen_residual.csv` | E008 (CatBoost + `screen_residual`) | `notebooks/09_final_submission_strategy.ipynb` (from the frozen `outputs/test_predictions/E008.csv` artifact) | 0.96104 (std 0.00055) | pending |
 
 `E001_submission.csv` was produced by refitting the E001 pipeline
 (`src/preprocessing.py` + `LogisticRegression(max_iter=1000,
@@ -45,3 +46,12 @@ then predicting probabilities on `data/test.csv`, and validated against
 probabilities from `src.tuning.run_xgboost_trial`'s 5-fold CV run (same
 fold-averaging approach as E002/E004, not a full-data refit), then
 validated against `data/sample_submission.csv`.
+
+`submission_E008_catboost_screen_residual.csv` was produced in Build 9 by
+reusing the frozen `outputs/test_predictions/E008.csv` artifact (Build 7 --
+fold-averaged test probabilities from E008's exact configuration,
+regenerated and reconciled against its recorded `cv_mean` of 0.96104
+before being trusted). No retraining was performed; the artifact was
+loaded via `src.ensembling.load_test_pred`, aligned to
+`data/sample_submission.csv`'s id order, and validated with
+`src.submission_validation.validate_submission`.
