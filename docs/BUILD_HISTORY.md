@@ -12,7 +12,7 @@ any modeling work begins.
 
 - Verified the repository was not yet a Git repository and initialized one
   (independent of the parent `D:/Projects` config-sync repository).
-- Created the Kaggle-specific directory structure: `src/`, `notebooks/`,
+- Created the competition-specific directory structure: `src/`, `notebooks/`,
   `tests/`, `data/`, `experiments/`, `submissions/`, `docs/`, `outputs/`.
 - Wrote `.gitignore` protecting raw competition CSVs, the in-project venv
   (`phone-addiction/`), and local-only files (`CONTEXT.md`), while still
@@ -516,7 +516,7 @@ the underlying code path is correct and deterministic). `pytest tests/
 `test_tuning.py` tests).
 
 **Final status:** complete. `deliverables/submission_E010_xgb_tuned.csv`
-submitted to Kaggle (user action); public LB score **0.96653**, recorded
+submitted (user action); public LB score **0.96653**, recorded
 in `experiments/experiments.csv`'s E010 row — an improvement over E006's
 0.96608 and the new best public LB score. Merged to `main` via PR #22.
 
@@ -729,7 +729,7 @@ by any candidate.
 
 **Submission selection (Phase 10): no Build 7 submission.** Per the
 brief's own "do not submit dominated blends" rule and the core finding
-above, no blend earns a Kaggle submission this build -- E010's standing
+above, no blend earns a submission this build -- E010's standing
 public LB (0.96653) remains the reference. Confirmed with the user
 rather than assumed, given it closes off the build's headline question.
 No new row was added to `experiments/experiments.csv`: none of the
@@ -747,10 +747,10 @@ new features, no base-model hyperparameters changed.
 ## Build 8 - CV vs Leaderboard Reconciliation
 
 **Objective:** how trustworthy has local cross-validation been relative
-to Kaggle's public leaderboard, and what does that imply about
+to the public leaderboard, and what does that imply about
 overfitting risk and confidence in E010 entering Build 9's final
 submission decision? Analytical only -- no new features, tuning,
-ensembling, or Kaggle submissions.
+ensembling, or submissions.
 
 **Experiments reconciled:** the 5 actually-submitted experiments (E001,
 E002, E004, E006, E010) -- E003/E005/E007/E008/E009 were validated
@@ -836,7 +836,7 @@ evidence.
 - **Rejected:** E003, E005, E007, E009 (never submitted, already
   rejected on CV evidence in their own builds).
 
-**No new Kaggle submissions this build**, per scope. No new experiment
+**No new submissions this build**, per scope. No new experiment
 ID assigned -- Build 8 performed no new predictive-configuration
 training or evaluation.
 
@@ -849,18 +849,16 @@ allowance to skip new tests in that case).
 ## Build 9 - Final Submission Strategy
 
 **Objective:** make the final competition submission decision using the
-validated evidence accumulated across Builds 1-8, actual Kaggle
+validated evidence accumulated across Builds 1-8, actual competition
 constraints, model diversity, public-LB behavior, and private-LB risk.
 Decision and competition-close preparation only -- no new feature
 engineering, hyperparameter tuning, model-family benchmarking, blending,
 stacking, or exploratory modeling unless a genuine integrity problem was
 discovered (none was).
 
-**Live Kaggle constraints verified** (`kaggle.com/competitions/playground-series-s6e8`,
-checked 2026-08-24): competition open, 7 days to go; Final Submission
-Deadline August 31, 2026, 11:59 PM UTC; daily submission limit 10; up to
-2 Final Submissions selectable for judging; prize structure is Kaggle
-merchandise only (no points/medals).
+**Live competition constraints verified** ahead of the final selection
+window: the competition remained open, with up to two final submissions
+selectable for judging.
 
 **E010 integrity audit:** the committed deliverable
 (`deliverables/submission_E010_xgb_tuned.csv`) matches the persisted,
@@ -896,7 +894,7 @@ parameter/feature/seed/fold-setup change. Schema validation passed
 predictions in [0.000197, 0.999999], no missing/non-finite values). No
 new experiment ID was assigned -- E008 already exists in
 `experiments/experiments.csv`; this build only closes its missing
-public-LB evidence gap. **Public LB: pending manual Kaggle upload and
+public-LB evidence gap. **Public LB: pending manual upload and
 score entry**, recorded in `docs/DECISIONS.md` as a decision made prior
 to observing the result.
 
@@ -907,27 +905,24 @@ risk-matrix rationale in `outputs/final_submission_candidates.csv` and
 modeling of any kind was performed -- no features, tuning, blending, or
 stacking.
 
-**`docs/COMPETITION_CLOSE_CHECKLIST.md` created** -- the human action
-list for final selection before the 2026-08-31 23:59 UTC deadline
+**A human pre-close action list was created** covering final selection
 (upload both files if not already uploaded, record E008's public LB,
-mark exactly E010 and E008 as the two Final Submissions, verify the
-marked scores match) and for after competition close (record private
-LB, final rank, percentile).
+mark exactly E010 and E008 as the two final submissions, verify the
+marked scores match) and post-close result recording (private LB, final
+rank, percentile).
 
 **Final rank, private LB, percentile, and medal/status are explicitly
-marked pending** in `docs/COMPETITION_CLOSE_CHECKLIST.md` and
-`README.md` -- not estimated, per the build's own rule against premature
-final-result claims.
+marked pending** in `README.md` -- not estimated, per the build's own
+rule against premature final-result claims.
 
 **Final status:** complete. `notebooks/09_final_submission_strategy.ipynb`
 run top-to-bottom via papermill, zero cell errors across all 11 code
 cells. `pytest tests/ -v`: 71/71 passing (no new reusable `src/` code
 introduced -- the submission-generation logic reuses `src.ensembling`
 and `src.submission_validation` exactly as Build 7 built them, so no new
-tests were required). Merged to `main` via PR (see PR link in this
-build's final handoff). Next step: user manually uploads/selects final
-submissions on Kaggle per the close checklist, then waits for E008's
-public LB and, eventually, competition close, before Build C begins.
+tests were required). Merged to `main` via PR. Next step: user manually
+uploads/selects final submissions, then waits for E008's public LB and,
+eventually, competition close, before Build C begins.
 
 ## Build C - Consolidation, Reproduction, Documentation, Publication
 
